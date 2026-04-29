@@ -1,0 +1,67 @@
+/* ── BUSCA ── */
+.busca-card {
+    padding: 16px 20px;
+    margin-bottom: 16px;
+}
+
+.busca-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.busca-icon {
+    width: 18px;
+    height: 18px;
+    color: var(--text-muted);
+    flex-shrink: 0;
+}
+
+.busca-input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 14px;
+    font-family: 'DM Sans', sans-serif;
+    color: var(--text-primary);
+    background: transparent;
+}
+
+.busca-input::placeholder { color: var(--text-muted); }
+
+/* ── BADGE MATRÍCULA ── */
+.badge-matricula {
+    display: inline-block;
+    padding: 3px 10px;
+    background: #eff6ff;
+    color: #3b82f6;
+    border-radius: 6px;
+    font-size: 13px;
+    font-family: 'DM Mono', monospace;
+    font-weight: 500;
+}
+
+/* ── BOTÃO NOVO ALUNO ── */
+.btn-novo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: #3b82f6;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.btn-novo:hover { background: #2563eb; }
+
+/* ── COLUNAS ESPECÍFICAS ── */
+.td-nome  { font-weight: 500; }
+.td-email { color: var(--text-secondary) !important; font-size: 13px !important; }

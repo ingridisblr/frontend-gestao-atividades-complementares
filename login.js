@@ -15,10 +15,10 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
     if (res.ok) {
        
         localStorage.setItem('token', data.token);
-        window.location.href = '/dashboard.html';
+        localStorage.setItem('user', JSON.stringify(data.user));
+        window.location.href = './admin/pages/dashboard.html';
     } else {
         
         alert(data.message || 'Erro ao fazer login');
     }
-});
-
+    });

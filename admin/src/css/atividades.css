@@ -1,0 +1,56 @@
+/* ── FILTRO ── */
+.filtro-card {
+    padding: 20px 24px;
+    margin-bottom: 16px;
+}
+
+.filtro-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-width: 280px;
+}
+
+.filtro-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.filtro-select {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: 'DM Sans', sans-serif;
+    color: var(--text-primary);
+    background: var(--surface);
+    cursor: pointer;
+    appearance: auto;
+    transition: border-color 0.2s;
+}
+
+.filtro-select:focus {
+    outline: none;
+    border-color: var(--brand);
+}
+
+/* ── COLUNAS ESPECÍFICAS ── */
+.td-aluno    { font-weight: 500; }
+.td-curso    { color: var(--brand) !important; font-size: 13px !important; }
+.td-horas    { font-family: 'DM Mono', monospace; font-size: 13px !important; }
+.td-data     { font-family: 'DM Mono', monospace; font-size: 13px !important; color: var(--text-muted) !important; }
+
+/* ── BADGE STATUS ── */
+.badge {
+    display: inline-block;
+    padding: 4px 14px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.badge.pendente  { background: var(--pending-bg);  color: var(--pending-color); }
+.badge.aprovada  { background: var(--approved-bg); color: var(--approved-color); }
+.badge.reprovada { background: var(--rejected-bg); color: var(--rejected-color); }

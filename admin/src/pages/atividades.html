@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="../../../assets/imagens/k-logo1.png">
     <title>KORE - Atividades</title>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../css/global.css">
@@ -16,7 +17,7 @@
             <img src="../../../assets/imagens/k-logo1.png" alt="KORE" class="sidebar-k-logo">
             <div>
                 <div class="brand-name">KORE</div>
-                <div class="brand-sub">Coordenação</div>
+                <div class="brand-sub">Administração</div>
             </div>
         </div>
 
@@ -26,7 +27,32 @@
                     <rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/>
                     <rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>
                 </svg>
-                Dashboard
+                Dashboard Geral
+            </a>
+            <a class="nav-item" href="cursos.html">
+                <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                    <path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/>
+                </svg>
+                Cursos
+            </a>
+            <a class="nav-item" href="categorias.html">
+                <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                    <path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/>
+                </svg>
+                Categorias
+            </a>
+            <a class="nav-item" href="regras.html">
+                <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"/>
+                </svg>
+                Regras de CH
+            </a>
+            <a class="nav-item" href="alunos.html">
+                <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                    <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/>
+                    <path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/>
+                </svg>
+                Alunos
             </a>
             <a class="nav-item active" href="atividades.html">
                 <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
@@ -35,63 +61,54 @@
                 </svg>
                 Atividades
             </a>
-            <a class="nav-item" href="historico.html">
+            <a class="nav-item" href="auditoria.html">
                 <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-                    <circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/>
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
                 </svg>
-                Histórico
+                Auditoria
             </a>
         </nav>
 
-        <div class="sidebar-footer">
+        <div class="sidebar-footer"> 
             <div class="nav-item" onclick="logout()" style="color:#ef4444">
                 <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
                     <path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h6a2 2 0 012 2v1"/>
                 </svg>
                 Sair
             </div>
-        </div>
+        
     </aside>
 
+    <!-- MAIN -->
     <div class="main">
 
+        <!-- TOPBAR -->
         <header class="topbar">
             <div class="topbar-user">
                 <span class="user-name" id="userName">Carregando...</span>
                 <span class="user-email" id="userEmail"></span>
             </div>
-            <button class="btn-logout" onclick="logout()">
-                <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-                    <path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h6a2 2 0 012 2v1"/>
-                </svg>
-                Sair
-            </button>
         </header>
 
+        <!-- CONTENT -->
         <main class="content">
-            <h1 class="page-title">Atividades</h1>
-            <p class="page-subtitle">Gerencie e valide as atividades complementares</p>
+            <h1 class="page-title">Atividades (Visão Global)</h1>
+            <p class="page-subtitle">Visualize todas as atividades do sistema</p>
 
-            <div class="card filtros-card">
-                <div class="filtros-grid">
-                    <div class="filtro-group">
-                        <label class="filtro-label">Status</label>
-                        <select id="filtroStatus" class="filtro-select" onchange="filtrar()">
-                            <option value="">Todos</option>
-                            <option value="pendente">Pendente</option>
-                            <option value="aprovada">Aprovada</option>
-                            <option value="reprovada">Reprovada</option>
-                        </select>
-                    </div>
-                    <div class="filtro-group">
-                        <label class="filtro-label">Curso</label>
-                        <select id="filtroCurso" class="filtro-select" onchange="filtrar()">
-                            <option value="">Todos</option>
-                        </select>
-                    </div>
+            <!-- FILTRO -->
+            <div class="card filtro-card">
+                <div class="filtro-group">
+                    <label class="filtro-label">Filtrar por Status</label>
+                    <select id="filtroStatus" class="filtro-select" onchange="filtrar()">
+                        <option value="">Todos</option>
+                        <option value="pendente">Pendente</option>
+                        <option value="aprovada">Aprovada</option>
+                        <option value="reprovada">Reprovada</option>
+                    </select>
                 </div>
             </div>
 
+            <!-- TABELA -->
             <div class="card">
                 <table class="tabela">
                     <thead>
@@ -99,9 +116,9 @@
                             <th>Aluno</th>
                             <th>Curso</th>
                             <th>Categoria</th>
-                            <th>Carga Horária</th>
+                            <th>Horas</th>
                             <th>Status</th>
-                            <th>Ações</th>
+                            <th>Data</th>
                         </tr>
                     </thead>
                     <tbody id="tabelaBody">
@@ -118,7 +135,8 @@
 
     <script src="../js/api.js"></script>
     <script src="../js/auth.js"></script>
+    <script src="../js/components.js"></script>
     <script src="../js/atividades.js"></script>
 
 </body>
-</html>     
+</html>
