@@ -62,29 +62,40 @@ function editarCurso(curso) {
 }
 
 async function salvarCurso() {
-    const body = {
-        nome:   document.getElementById('inputNome').value.trim(),
-        codigo: document.getElementById('inputCodigo').value.trim().toUpperCase(),
-        status: document.getElementById('inputStatus').value,
-    };
+    const nome = document.getElementById('inputNome').value.trim();
+    const codigo = document.getElementById('inputCodigo').value.trim().toUpperCase();
+    const status = document.getElementById('inputStatus').value;
 
-    if (!body.nome || !body.codigo) {
+    if (!nome || !codigo) {
         alert('Preencha nome e código.');
         return;
     }
 
+    const body = {
+        nome,
+        codigo,
+        ativo: status === 'ativo'
+    };
+
     try {
-        const url    = cursoEditandoId ? `/api/admin/cursos/${cursoEditandoId}` : '/api/admin/cursos';
-        const method = cursoEditandoId ? 'PUT' : 'POST';
+        const res = await apiFetch('/api/cursos', {
+            method: 'POST',
+            body: JSON.stringify(body)
+        });
 
-        const res = await apiFetch(url, { method, body: JSON.stringify(body) });
-        if (!res.ok) throw new Error();
+        const data = await res.json();
 
-        mostrarToast(cursoEditandoId ? 'Curso atualizado!' : 'Curso criado!');
+        if (!res.ok) {
+            alert(data.message || data.mensagem || 'Erro ao salvar curso.');
+            return;
+        }
+
+        mostrarToast('Curso criado!');
         fecharModal();
         carregarCursos();
 
-    } catch {
+    } catch (error) {
+        console.error('Erro ao salvar curso:', error);
         alert('Erro ao salvar curso. Tente novamente.');
     }
 }
