@@ -40,4 +40,5 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
         console.error('Erro no login:', error);
         alert('Erro de conexão com o servidor.');
     }
-});
+    });
+
