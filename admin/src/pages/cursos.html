@@ -112,13 +112,14 @@
                         <tr>
                             <th>Nome</th>
                             <th>Código</th>
+                            <th>Carga Horária</th>
                             <th>Status</th>
                             <th>Ações</th>
                         </tr>
                     </thead>
                     <tbody id="tabelaBody">
                         <tr>
-                            <td colspan="4" class="loading-cell">
+                            <td colspan="5" class="loading-cell">
                                 <div class="skeleton skeleton-text" style="width:40%;margin:0 auto"></div>
                             </td>
                         </tr>
@@ -144,19 +145,27 @@
                 <label class="form-label">Nome do curso</label>
                 <input type="text" id="inputNome" class="form-input" placeholder="Ex: Ciência da Computação">
             </div>
+
             <div class="form-group">
                 <label class="form-label">Código</label>
                 <input type="text" id="inputCodigo" class="form-input" placeholder="Ex: CC">
             </div>
+
+            <div class="form-group">
+                <label class="form-label">Carga horária complementar</label>
+                <input type="number" id="inputCarga" class="form-input" placeholder="Ex: 180">
+            </div>
+
             <div class="form-group">
                 <label class="form-label">Status</label>
                 <select id="inputStatus" class="form-input">
-                    <option value="ativo">Ativo</option>
-                    <option value="inativo">Inativo</option>
-                </select>
+                <option value="ativo">Ativo</option>
+                <option value="inativo">Inativo</option>
+             </select>
             </div>
         </div>
-        <div class="modal-footer">
+
+           <div class="modal-footer">
             <button class="btn-cancelar" onclick="fecharModal()">Cancelar</button>
             <button class="btn-salvar" onclick="salvarCurso()">Salvar</button>
         </div>
