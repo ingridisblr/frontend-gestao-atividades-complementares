@@ -34,7 +34,7 @@
     display: inline-block;
     padding: 3px 10px;
     background: #eff6ff;
-    color: #3b82f6;
+    color: #00B7B8;
     border-radius: 6px;
     font-size: 13px;
     font-family: 'DM Mono', monospace;
@@ -47,7 +47,7 @@
     align-items: center;
     gap: 8px;
     padding: 10px 20px;
-    background: #3b82f6;
+    background: #00B7B8;
     color: #fff;
     border: none;
     border-radius: 8px;
@@ -60,7 +60,7 @@
     flex-shrink: 0;
 }
 
-.btn-novo:hover { background: #2563eb; }
+.btn-novo:hover { background: #009494; }
 
 /* ── COLUNAS ESPECÍFICAS ── */
 .td-nome  { font-weight: 500; }
