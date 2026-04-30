@@ -22,3 +22,4 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
         alert(data.message || 'Erro ao fazer login');
     }
     });
+

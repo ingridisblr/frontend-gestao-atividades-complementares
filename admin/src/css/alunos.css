@@ -65,3 +65,17 @@
 /* ── COLUNAS ESPECÍFICAS ── */
 .td-nome  { font-weight: 500; }
 .td-email { color: var(--text-secondary) !important; font-size: 13px !important; }
+
+/* Campo com erro de validação */
+.form-input.input-erro {
+    border-color: #dc2626;
+}
+.form-input.input-erro:focus {
+    border-color: #dc2626;
+}
+ 
+/* Botão salvar desabilitado */
+.btn-salvar:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
