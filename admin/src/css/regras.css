@@ -1,0 +1,67 @@
+/* ── BUSCA ── */
+.busca-card {
+    padding: 16px 20px;
+    margin-bottom: 16px;
+}
+
+.busca-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.busca-icon {
+    width: 18px;
+    height: 18px;
+    color: var(--text-muted);
+    flex-shrink: 0;
+}
+
+.busca-input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 14px;
+    font-family: 'DM Sans', sans-serif;
+    color: var(--text-primary);
+    background: transparent;
+}
+
+.busca-input::placeholder { color: var(--text-muted); }
+
+/* ── BADGE HORAS ── */
+.badge-horas {
+    display: inline-block;
+    padding: 3px 10px;
+    background: #eff6ff;
+    color: #00B7B8;
+    border-radius: 6px;
+    font-size: 13px;
+    font-family: 'DM Mono', monospace;
+    font-weight: 500;
+}
+
+/* ── BOTÃO NOVO ── */
+.btn-novo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: #00B7B8;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-novo:hover {
+    background: #00999a;
+    transform: translateY(-1px);
+}
+
+.btn-novo:active {
+    transform: translateY(0);
+}
