@@ -193,7 +193,7 @@ async function excluirRegra(id) {
     }
 }
 
-// ── UTILITÁRIOS ──────────────────────────────────────────────────────────────
+// ── UTILITÁRIOS ───────────────────────────────────────────────────────
 function escapeHtml(text) {
     const div = document.createElement('div');
     div.textContent = text;
