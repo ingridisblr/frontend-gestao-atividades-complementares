@@ -29,3 +29,38 @@ async function apiFetch(endpoint, options = {}) {
         throw error;
     }
 }
+
+// ── OBJETO API PARA FACILITAR O USO ───────────────────────────────────────────
+const api = {
+    async get(endpoint) {
+        const response = await apiFetch(endpoint);
+        if (!response.ok) throw new Error(`GET ${endpoint} failed`);
+        return await response.json();
+    },
+
+    async post(endpoint, data) {
+        const response = await apiFetch(endpoint, {
+            method: 'POST',
+            body: JSON.stringify(data)
+        });
+        if (!response.ok) throw new Error(`POST ${endpoint} failed`);
+        return await response.json();
+    },
+
+    async put(endpoint, data) {
+        const response = await apiFetch(endpoint, {
+            method: 'PUT',
+            body: JSON.stringify(data)
+        });
+        if (!response.ok) throw new Error(`PUT ${endpoint} failed`);
+        return await response.json();
+    },
+
+    async delete(endpoint) {
+        const response = await apiFetch(endpoint, {
+            method: 'DELETE'
+        });
+        if (!response.ok) throw new Error(`DELETE ${endpoint} failed`);
+        return await response.json();
+    }
+};
