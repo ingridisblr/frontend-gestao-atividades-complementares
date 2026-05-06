@@ -18,6 +18,7 @@ const icoAvatar = `<svg fill="none" stroke="currentColor" stroke-width="1.8" vie
 </svg>`;
 
 let coordenadores = [];
+let cursosDisponiveis = [];
 let coordEditandoId = null;
 let coordExcluindoId = null;
 
@@ -33,16 +34,84 @@ function formatarData(iso) {
     return new Date(iso).toLocaleDateString('pt-BR');
 }
 
-function obterCurso(c) {
-    if (c.curso) return c.curso;
+function gerarCodigoUsuario(email) {
+    return email
+        .split('@')[0]
+        .replace(/[^a-zA-Z0-9]/g, '')
+        .toUpperCase();
+}
 
-    if (Array.isArray(c.cursosCoordenados) && c.cursosCoordenados.length > 0) {
-        return c.cursosCoordenados
-            .map(curso => curso.nome || curso.titulo || curso.codigo || curso)
-            .join(', ');
+function obterIdCursoCoordenado(coord) {
+    const primeiro = coord?.cursosCoordenados?.[0];
+
+    if (!primeiro) return '';
+
+    if (typeof primeiro === 'string') return primeiro;
+
+    if (primeiro.cursoId) {
+        if (typeof primeiro.cursoId === 'string') return primeiro.cursoId;
+        return primeiro.cursoId._id || primeiro.cursoId.id || '';
     }
 
-    return '–';
+    return primeiro._id || primeiro.id || '';
+}
+
+function obterCurso(coord) {
+    if (!coord?.cursosCoordenados?.length) return '–';
+
+    return coord.cursosCoordenados
+        .map(item => {
+            const curso = item.cursoId || item;
+
+            if (typeof curso === 'string') {
+                const encontrado = cursosDisponiveis.find(c => (c._id || c.id) === curso);
+                return encontrado?.nome || encontrado?.titulo || encontrado?.codigo || curso;
+            }
+
+            return curso.nome || curso.titulo || curso.codigo || 'Curso';
+        })
+        .join(', ');
+}
+
+function popularSelectCursos(cursoSelecionado = '') {
+    const select = document.getElementById('inputCurso');
+
+    select.innerHTML = '<option value="">Selecione um curso</option>';
+
+    cursosDisponiveis.forEach(curso => {
+        const id = curso._id || curso.id;
+        const nome = curso.nome || curso.titulo || curso.codigo || 'Curso sem nome';
+
+        const option = document.createElement('option');
+        option.value = id;
+        option.textContent = nome;
+
+        if (id === cursoSelecionado) {
+            option.selected = true;
+        }
+
+        select.appendChild(option);
+    });
+}
+
+async function carregarCursos() {
+    try {
+        const res = await apiFetch('/api/cursos');
+        const data = await res.json().catch(() => ({}));
+
+        if (!res.ok) {
+            throw new Error(data.message || 'Erro ao buscar cursos');
+        }
+
+        cursosDisponiveis = data.cursos || data.data || data || [];
+        popularSelectCursos();
+
+    } catch (err) {
+        console.error('Erro ao carregar cursos:', err);
+        cursosDisponiveis = [];
+        popularSelectCursos();
+        mostrarToast('Erro ao carregar cursos.');
+    }
 }
 
 function renderizarTabela(lista) {
@@ -91,11 +160,14 @@ function renderizarTabela(lista) {
 function abrirModal(coord = null) {
     coordEditandoId = coord?._id || coord?.id || null;
 
+    const cursoSelecionado = obterIdCursoCoordenado(coord);
+
     document.getElementById('modalTitulo').textContent = coord ? 'Editar Coordenador' : 'Novo Coordenador';
     document.getElementById('inputNome').value = coord?.nome || '';
     document.getElementById('inputEmail').value = coord?.email || '';
-    document.getElementById('inputCurso').value = obterCurso(coord || {});
     document.getElementById('inputStatus').value = coord?.ativo === false ? 'inativo' : 'ativo';
+
+    popularSelectCursos(cursoSelecionado);
 
     document.getElementById('modalOverlay').classList.add('open');
     document.getElementById('modal').classList.add('open');
@@ -115,30 +187,30 @@ function editarCoordenador(coord) {
 async function salvarCoordenador() {
     const nome = document.getElementById('inputNome').value.trim();
     const email = document.getElementById('inputEmail').value.trim();
-    const curso = document.getElementById('inputCurso').value.trim();
+    const cursoId = document.getElementById('inputCurso').value;
     const status = document.getElementById('inputStatus').value;
 
-    if (!nome || !email || !curso) {
+    if (!nome || !email || !cursoId) {
         mostrarToast('Preencha todos os campos obrigatórios.');
         return;
     }
 
     const body = {
+        codigoUsuario: gerarCodigoUsuario(email),
         nome,
         email,
+        senhaHash: '123456',
         perfis: ['coordenador'],
         ativo: status === 'ativo',
-        cursosCoordenados: curso ? [curso] : []
+        cursosCoordenados: [{ cursoId }]
     };
-
-    if (!coordEditandoId) {
-        body.senha = '123456';
-    }
 
     try {
         let res;
 
         if (coordEditandoId) {
+            delete body.senhaHash;
+
             res = await apiFetch(`/api/usuarios/${coordEditandoId}`, {
                 method: 'PATCH',
                 body: JSON.stringify(body)
@@ -153,7 +225,8 @@ async function salvarCoordenador() {
         const data = await res.json().catch(() => ({}));
 
         if (!res.ok) {
-            throw new Error(data.message || 'Erro na resposta do servidor');
+            const msg = data.message || data.errors?.join(', ') || 'Erro na resposta do servidor';
+            throw new Error(msg);
         }
 
         fecharModal();
@@ -207,7 +280,6 @@ async function deletarCoordenador(id) {
 async function carregarCoordenadores() {
     try {
         const res = await apiFetch('/api/usuarios');
-
         const data = await res.json().catch(() => ({}));
 
         if (!res.ok) {
@@ -227,5 +299,10 @@ async function carregarCoordenadores() {
     }
 }
 
-renderTopbar();
-carregarCoordenadores();
+async function inicializar() {
+    renderTopbar();
+    await carregarCursos();
+    await carregarCoordenadores();
+}
+
+inicializar();
