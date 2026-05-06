@@ -27,7 +27,6 @@
     color: var(--text-primary);
     background: var(--surface);
     cursor: pointer;
-    appearance: auto;
     transition: border-color 0.2s;
 }
 
@@ -36,11 +35,15 @@
     border-color: var(--brand);
 }
 
+.tabela-card {
+    overflow-x: auto;
+}
+
 /* ── COLUNAS ESPECÍFICAS ── */
-.td-aluno    { font-weight: 500; }
-.td-curso    { color: var(--brand) !important; font-size: 13px !important; }
-.td-horas    { font-family: 'DM Mono', monospace; font-size: 13px !important; }
-.td-data     { font-family: 'DM Mono', monospace; font-size: 13px !important; color: var(--text-muted) !important; }
+.td-aluno { font-weight: 500; }
+.td-curso { color: var(--brand) !important; font-size: 13px !important; }
+.td-horas { font-family: 'DM Mono', monospace; font-size: 13px !important; }
+.td-data  { font-family: 'DM Mono', monospace; font-size: 13px !important; color: var(--text-muted) !important; }
 
 /* ── BADGE STATUS ── */
 .badge {
@@ -49,8 +52,163 @@
     border-radius: 999px;
     font-size: 13px;
     font-weight: 500;
+    white-space: nowrap;
 }
 
-.badge.pendente  { background: var(--pending-bg);  color: var(--pending-color); }
-.badge.aprovada  { background: var(--approved-bg); color: var(--approved-color); }
-.badge.reprovada { background: var(--rejected-bg); color: var(--rejected-color); }
+.badge.pendente,
+.badge.enviada,
+.badge.em-análise {
+    background: var(--pending-bg);
+    color: var(--pending-color);
+}
+
+.badge.aprovada {
+    background: var(--approved-bg);
+    color: var(--approved-color);
+}
+
+.badge.reprovada {
+    background: var(--rejected-bg);
+    color: var(--rejected-color);
+}
+
+/* ── BOTÕES ── */
+.btn-detalhes {
+    padding: 7px 12px;
+    border: none;
+    border-radius: 8px;
+    background: var(--brand-light);
+    color: var(--brand-dark);
+    font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.15s, color 0.15s;
+}
+
+.btn-detalhes:hover {
+    background: var(--brand);
+    color: #fff;
+}
+
+.btn-reprovar {
+    padding: 9px 18px;
+    border: none;
+    border-radius: 8px;
+    background: #dc2626;
+    color: #fff;
+    font-size: 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.btn-reprovar:hover { background: #b91c1c; }
+
+/* ── MODAL DE ATIVIDADE ── */
+.modal-atividade {
+    max-width: 920px;
+    max-height: 90vh;
+    overflow: hidden;
+}
+
+.modal-atividade.open {
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-atividade .modal-body {
+    overflow-y: auto;
+}
+
+.detalhes-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.detalhe-item {
+    padding: 12px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+}
+
+.detalhe-item span {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.detalhe-item strong {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.texto-detalhe {
+    padding: 12px 14px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--text-primary);
+}
+
+.arquivo-preview {
+    padding: 14px;
+    border: 1px dashed var(--border);
+    border-radius: 12px;
+    background: #fafbfc;
+    color: var(--text-muted);
+}
+
+.arquivo-preview iframe {
+    width: 100%;
+    height: 380px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: #fff;
+}
+
+.arquivo-preview img {
+    display: block;
+    max-width: 100%;
+    max-height: 380px;
+    margin: 0 auto;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: #fff;
+}
+
+.link-arquivo {
+    display: inline-block;
+    margin-top: 10px;
+    color: var(--brand-dark);
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.link-arquivo:hover { text-decoration: underline; }
+
+.arquivo-vazio {
+    display: block;
+    padding: 18px;
+    text-align: center;
+}
+
+@media (max-width: 900px) {
+    .detalhes-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .modal-atividade {
+        width: calc(100% - 32px);
+    }
+}
