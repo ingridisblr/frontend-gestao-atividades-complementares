@@ -17,12 +17,10 @@ const icoAvatar = `<svg fill="none" stroke="currentColor" stroke-width="1.8" vie
     <path d="M19 11l1.5 1.5L23 10"/>
 </svg>`;
 
-// ── ESTADO ──────────────────────────────────────────────
 let coordenadores = [];
 let coordEditandoId = null;
 let coordExcluindoId = null;
 
-// ── TOAST ────────────────────────────────────────────────
 function mostrarToast(msg) {
     const toast = document.getElementById('toast');
     document.getElementById('toastMsg').textContent = msg;
@@ -30,15 +28,23 @@ function mostrarToast(msg) {
     setTimeout(() => toast.classList.remove('show'), 2500);
 }
 
-// ── FORMATAR DATA ────────────────────────────────────────
 function formatarData(iso) {
     if (!iso) return '–';
-    return new Date(iso).toLocaleDateString('pt-PT', {
-        day: '2-digit', month: '2-digit', year: 'numeric'
-    });
+    return new Date(iso).toLocaleDateString('pt-BR');
 }
 
-// ── RENDERIZAR TABELA ────────────────────────────────────
+function obterCurso(c) {
+    if (c.curso) return c.curso;
+
+    if (Array.isArray(c.cursosCoordenados) && c.cursosCoordenados.length > 0) {
+        return c.cursosCoordenados
+            .map(curso => curso.nome || curso.titulo || curso.codigo || curso)
+            .join(', ');
+    }
+
+    return '–';
+}
+
 function renderizarTabela(lista) {
     const tbody = document.getElementById('tabelaBody');
 
@@ -48,7 +54,9 @@ function renderizarTabela(lista) {
     }
 
     tbody.innerHTML = lista.map(c => {
-        const status = (c.status || 'ativo').toLowerCase();
+        const id = c._id || c.id;
+        const status = c.ativo === false ? 'inativo' : 'ativo';
+
         return `
             <tr>
                 <td>
@@ -58,7 +66,7 @@ function renderizarTabela(lista) {
                     </div>
                 </td>
                 <td class="td-email">${c.email || '–'}</td>
-                <td>${c.curso || '–'}</td>
+                <td>${obterCurso(c)}</td>
                 <td>
                     <span class="badge-status ${status}">
                         ${status === 'ativo' ? 'Ativo' : 'Inativo'}
@@ -70,7 +78,7 @@ function renderizarTabela(lista) {
                         <button class="btn-acao editar" onclick='editarCoordenador(${JSON.stringify(c)})' title="Editar">
                             ${icoEditar}
                         </button>
-                        <button class="btn-acao deletar" onclick="confirmarExclusao('${c._id || c.id}', '${(c.nome || '').replace(/'/g, "\\'")}')" title="Remover">
+                        <button class="btn-acao deletar" onclick="confirmarExclusao('${id}', '${(c.nome || '').replace(/'/g, "\\'")}')" title="Remover">
                             ${icoDeletar}
                         </button>
                     </div>
@@ -80,15 +88,14 @@ function renderizarTabela(lista) {
     }).join('');
 }
 
-// ── MODAL CRIAR / EDITAR ─────────────────────────────────
 function abrirModal(coord = null) {
     coordEditandoId = coord?._id || coord?.id || null;
 
     document.getElementById('modalTitulo').textContent = coord ? 'Editar Coordenador' : 'Novo Coordenador';
-    document.getElementById('inputNome').value   = coord?.nome   || '';
-    document.getElementById('inputEmail').value  = coord?.email  || '';
-    document.getElementById('inputCurso').value  = coord?.curso  || '';
-    document.getElementById('inputStatus').value = coord?.status || 'ativo';
+    document.getElementById('inputNome').value = coord?.nome || '';
+    document.getElementById('inputEmail').value = coord?.email || '';
+    document.getElementById('inputCurso').value = obterCurso(coord || {});
+    document.getElementById('inputStatus').value = coord?.ativo === false ? 'inativo' : 'ativo';
 
     document.getElementById('modalOverlay').classList.add('open');
     document.getElementById('modal').classList.add('open');
@@ -105,11 +112,10 @@ function editarCoordenador(coord) {
     abrirModal(coord);
 }
 
-// ── SALVAR (criar ou editar) ─────────────────────────────
 async function salvarCoordenador() {
-    const nome   = document.getElementById('inputNome').value.trim();
-    const email  = document.getElementById('inputEmail').value.trim();
-    const curso  = document.getElementById('inputCurso').value.trim();
+    const nome = document.getElementById('inputNome').value.trim();
+    const email = document.getElementById('inputEmail').value.trim();
+    const curso = document.getElementById('inputCurso').value.trim();
     const status = document.getElementById('inputStatus').value;
 
     if (!nome || !email || !curso) {
@@ -117,40 +123,49 @@ async function salvarCoordenador() {
         return;
     }
 
-    const body = { nome, email, curso, status };
+    const body = {
+        nome,
+        email,
+        perfis: ['coordenador'],
+        ativo: status === 'ativo',
+        cursosCoordenados: curso ? [curso] : []
+    };
+
+    if (!coordEditandoId) {
+        body.senha = '123456';
+    }
 
     try {
         let res;
 
         if (coordEditandoId) {
-            // Editar existente
-            res = await apiFetch(`/api/admin/coordenadores/${coordEditandoId}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
+            res = await apiFetch(`/api/usuarios/${coordEditandoId}`, {
+                method: 'PATCH',
                 body: JSON.stringify(body)
             });
         } else {
-            // Criar novo
-            res = await apiFetch('/api/admin/coordenadores', {
+            res = await apiFetch('/api/usuarios', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(body)
             });
         }
 
-        if (!res.ok) throw new Error('Erro na resposta do servidor');
+        const data = await res.json().catch(() => ({}));
+
+        if (!res.ok) {
+            throw new Error(data.message || 'Erro na resposta do servidor');
+        }
 
         fecharModal();
         mostrarToast(coordEditandoId ? 'Coordenador atualizado!' : 'Coordenador criado com sucesso!');
         await carregarCoordenadores();
 
-         } catch (err) {
-         console.error('Erro ao salvar coordenador:', err);
-        mostrarToast('Erro ao salvar coordenador no banco.');
-        }
+    } catch (err) {
+        console.error('Erro ao salvar coordenador:', err);
+        mostrarToast(err.message || 'Erro ao salvar coordenador no banco.');
+    }
 }
 
-// ── MODAL CONFIRMAÇÃO DE EXCLUSÃO ────────────────────────
 function confirmarExclusao(id, nome) {
     coordExcluindoId = id;
     document.getElementById('nomeConfirm').textContent = nome;
@@ -166,43 +181,51 @@ function fecharConfirm() {
     coordExcluindoId = null;
 }
 
-// ── DELETAR ──────────────────────────────────────────────
 async function deletarCoordenador(id) {
     fecharConfirm();
 
     try {
-        const res = await apiFetch(`/api/admin/coordenadores/${id}`, { method: 'DELETE' });
+        const res = await apiFetch(`/api/usuarios/${id}`, {
+            method: 'DELETE'
+        });
 
-        if (!res.ok) throw new Error('Erro ao excluir');
+        const data = await res.json().catch(() => ({}));
+
+        if (!res.ok) {
+            throw new Error(data.message || 'Erro ao excluir');
+        }
 
         mostrarToast('Coordenador removido com sucesso!');
         await carregarCoordenadores();
 
-        } catch (err) {
+    } catch (err) {
         console.error('Erro ao deletar coordenador:', err);
-        mostrarToast('Erro ao remover coordenador do banco.');
-        }
+        mostrarToast(err.message || 'Erro ao remover coordenador do banco.');
+    }
 }
 
-// ── CARREGAR LISTA ────────────────────────────────────────
 async function carregarCoordenadores() {
     try {
-        const res = await apiFetch('/api/admin/coordenadores');
+        const res = await apiFetch('/api/usuarios');
 
-        if (!res.ok) throw new Error('Erro ao buscar coordenadores');
+        const data = await res.json().catch(() => ({}));
 
-        const data = await res.json();
-        coordenadores = data.coordenadores || data;
+        if (!res.ok) {
+            throw new Error(data.message || 'Erro ao buscar coordenadores');
+        }
+
+        const usuarios = data.data || data.usuarios || data || [];
+
+        coordenadores = usuarios.filter(u => u.perfis?.includes('coordenador'));
         renderizarTabela(coordenadores);
 
     } catch (err) {
         console.error('Erro ao carregar coordenadores:', err);
         coordenadores = [];
         renderizarTabela(coordenadores);
-        mostrarToast('Erro ao carregar coordenadores do banco.');
+        mostrarToast(err.message || 'Erro ao carregar coordenadores do banco.');
     }
 }
 
-// ── INICIALIZAR ───────────────────────────────────────────
 renderTopbar();
 carregarCoordenadores();
