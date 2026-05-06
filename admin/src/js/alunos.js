@@ -1,21 +1,96 @@
 // ── ESTADO ──────────────────────────────────────────────────────────────────
 let alunos = [];
-let modoEdicao = null; // null = novo, id = editar
+let cursosDisponiveis = [];
+let modoEdicao = null;
 
 // ── INIT ─────────────────────────────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', () => {
-    carregarAlunos();
+document.addEventListener('DOMContentLoaded', async () => {
+    await carregarCursos();
+    await carregarAlunos();
 });
+
+// ── CURSOS ───────────────────────────────────────────────────────────────────
+async function carregarCursos() {
+    try {
+        const res = await apiFetch('/api/cursos');
+        const data = await res.json().catch(() => ({}));
+
+        if (!res.ok) throw new Error(data.message || 'Erro ao buscar cursos');
+
+        cursosDisponiveis = data.cursos || data.data || data || [];
+        popularSelectCursos();
+
+    } catch (e) {
+        console.error('Erro ao carregar cursos:', e);
+        cursosDisponiveis = [];
+        popularSelectCursos();
+    }
+}
+
+function popularSelectCursos(cursoSelecionado = '') {
+    const select = document.getElementById('inputCurso');
+
+    if (!select) return;
+
+    select.innerHTML = '<option value="">Selecione um curso</option>';
+
+    cursosDisponiveis.forEach(curso => {
+        const id = curso._id || curso.id;
+        const nome = curso.nome || curso.titulo || curso.codigo || 'Curso sem nome';
+
+        const option = document.createElement('option');
+        option.value = id;
+        option.textContent = nome;
+
+        if (id === cursoSelecionado) {
+            option.selected = true;
+        }
+
+        select.appendChild(option);
+    });
+}
+
+function obterIdCursoAluno(aluno) {
+    const primeiro = aluno?.cursos?.[0];
+
+    if (!primeiro) return '';
+
+    if (typeof primeiro === 'string') return primeiro;
+
+    if (primeiro.cursoId) {
+        if (typeof primeiro.cursoId === 'string') return primeiro.cursoId;
+        return primeiro.cursoId._id || primeiro.cursoId.id || '';
+    }
+
+    return primeiro._id || primeiro.id || '';
+}
+
+function obterNomeCursoAluno(aluno) {
+    if (aluno?.curso && typeof aluno.curso === 'string') return aluno.curso;
+
+    const primeiro = aluno?.cursos?.[0];
+
+    if (!primeiro) return '–';
+
+    const curso = primeiro.cursoId || primeiro;
+
+    if (typeof curso === 'string') {
+        const encontrado = cursosDisponiveis.find(c => (c._id || c.id) === curso);
+        return encontrado?.nome || encontrado?.titulo || encontrado?.codigo || curso;
+    }
+
+    return curso.nome || curso.titulo || curso.codigo || '–';
+}
 
 // ── CARREGAR ALUNOS ───────────────────────────────────────────────────────────
 async function carregarAlunos() {
     try {
         const res = await apiFetch('/api/alunos');
+        const data = await res.json().catch(() => ({}));
 
-        if (!res.ok) throw new Error('Erro ao buscar alunos');
+        if (!res.ok) throw new Error(data.message || 'Erro ao buscar alunos');
 
-        const data = await res.json();
-        alunos = data.alunos || data;
+        alunos = data.alunos || data.data || data || [];
 
     } catch (e) {
         console.error('Erro ao carregar alunos:', e);
@@ -23,11 +98,6 @@ async function carregarAlunos() {
     }
 
     renderTabela(alunos);
-}
-
-// ── SALVAR NO LOCALSTORAGE (fallback sem API) ─────────────────────────────────
-function persistirLocal() {
-    localStorage.setItem('kore_alunos', JSON.stringify(alunos));
 }
 
 // ── RENDER TABELA ─────────────────────────────────────────────────────────────
@@ -44,70 +114,87 @@ function renderTabela(lista) {
         return;
     }
 
-    tbody.innerHTML = lista.map(a => `
-        <tr>
-            <td class="td-nome">${escapeHtml(a.nome)}</td>
-            <td><span class="badge-matricula">${escapeHtml(a.matricula)}</span></td>
-            <td>${escapeHtml(a.curso)}</td>
-            <td class="td-email">${escapeHtml(a.email)}</td>
-            <td>
-                <div class="acoes">
-                    <button class="btn-acao editar" onclick="abrirModalEdicao('${a.id}')" title="Editar">
-                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
-                            <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
-                        </svg>
-                    </button>
-                    <button class="btn-acao deletar" onclick="excluirAluno('${a.id}')" title="Excluir">
-                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/>
-                            <path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/>
-                        </svg>
-                    </button>
-                </div>
-            </td>
-        </tr>
-    `).join('');
+    tbody.innerHTML = lista.map(a => {
+        const id = a._id || a.id;
+
+        return `
+            <tr>
+                <td class="td-nome">${escapeHtml(a.nome || '–')}</td>
+                <td><span class="badge-matricula">${escapeHtml(a.matricula || '–')}</span></td>
+                <td>${escapeHtml(obterNomeCursoAluno(a))}</td>
+                <td class="td-email">${escapeHtml(a.email || '–')}</td>
+                <td>
+                    <div class="acoes">
+                        <button class="btn-acao editar" onclick="abrirModalEdicao('${id}')" title="Editar">
+                            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
+                                <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                            </svg>
+                        </button>
+                        <button class="btn-acao deletar" onclick="excluirAluno('${id}')" title="Excluir">
+                            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/>
+                                <path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/>
+                            </svg>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        `;
+    }).join('');
 }
 
 // ── BUSCA ─────────────────────────────────────────────────────────────────────
 function buscar() {
     const termo = document.getElementById('campoBusca').value.toLowerCase().trim();
+
     if (!termo) {
         renderTabela(alunos);
         return;
     }
+
     const filtrado = alunos.filter(a =>
-        a.nome.toLowerCase().includes(termo) ||
-        a.matricula.toLowerCase().includes(termo) ||
-        a.email.toLowerCase().includes(termo)
+        String(a.nome || '').toLowerCase().includes(termo) ||
+        String(a.matricula || '').toLowerCase().includes(termo) ||
+        String(a.email || '').toLowerCase().includes(termo)
     );
+
     renderTabela(filtrado);
 }
 
 // ── MODAL: ABRIR / FECHAR ─────────────────────────────────────────────────────
 function abrirModal() {
     modoEdicao = null;
+
     document.getElementById('modalTitulo').textContent = 'Novo Aluno';
     document.getElementById('btnSalvar').textContent = 'Salvar';
+
     limparFormulario();
+    popularSelectCursos();
+
     document.getElementById('modalOverlay').classList.add('open');
     document.getElementById('modal').classList.add('open');
     document.getElementById('inputNome').focus();
+    
 }
 
 function abrirModalEdicao(id) {
-    const aluno = alunos.find(a => a.id === id);
+    const aluno = alunos.find(a => (a._id || a.id) === id);
+
     if (!aluno) return;
 
     modoEdicao = id;
+
     document.getElementById('modalTitulo').textContent = 'Editar Aluno';
     document.getElementById('btnSalvar').textContent = 'Atualizar';
 
-    document.getElementById('inputNome').value      = aluno.nome;
-    document.getElementById('inputMatricula').value = aluno.matricula;
-    document.getElementById('inputEmail').value     = aluno.email;
-    document.getElementById('inputCurso').value     = aluno.curso;
+    document.getElementById('inputNome').value = aluno.nome || '';
+    document.getElementById('inputMatricula').value = aluno.matricula || '';
+    document.getElementById('inputEmail').value = aluno.email || '';
+    document.getElementById('inputDataColacao').value = aluno.dataPrevistaColacao
+    ? aluno.dataPrevistaColacao.split('T')[0]: '';
+
+    popularSelectCursos(obterIdCursoAluno(aluno));
 
     document.getElementById('modalOverlay').classList.add('open');
     document.getElementById('modal').classList.add('open');
@@ -122,23 +209,35 @@ function fecharModal() {
 }
 
 function limparFormulario() {
-    ['inputNome', 'inputMatricula', 'inputEmail', 'inputCurso'].forEach(id => {
-        document.getElementById(id).value = '';
-        document.getElementById(id).classList.remove('input-erro');
+    ['inputNome', 'inputMatricula', 'inputEmail', 'inputCurso', 'inputDataColacao'].forEach(id => {
+        const el = document.getElementById(id);
+
+        if (el) {
+            el.value = '';
+            el.classList.remove('input-erro');
+        }
     });
 }
 
 // ── SALVAR / ATUALIZAR ALUNO ──────────────────────────────────────────────────
 async function salvarAluno() {
-    const nome      = document.getElementById('inputNome').value.trim();
+    const nome = document.getElementById('inputNome').value.trim();
     const matricula = document.getElementById('inputMatricula').value.trim();
-    const email     = document.getElementById('inputEmail').value.trim();
-    const curso     = document.getElementById('inputCurso').value.trim();
+    const email = document.getElementById('inputEmail').value.trim();
+    const cursoId = document.getElementById('inputCurso').value;
+    const dataPrevistaColacao = document.getElementById('inputDataColacao').value;
 
-    // Validação
     let valido = true;
-    [['inputNome', nome], ['inputMatricula', matricula], ['inputEmail', email], ['inputCurso', curso]].forEach(([id, val]) => {
+
+    [
+        ['inputNome', nome],
+        ['inputMatricula', matricula],
+        ['inputEmail', email],
+        ['inputCurso', cursoId],
+        ['inputDataColacao', dataPrevistaColacao]
+    ].forEach(([id, val]) => {
         const el = document.getElementById(id);
+
         if (!val) {
             el.classList.add('input-erro');
             valido = false;
@@ -146,48 +245,55 @@ async function salvarAluno() {
             el.classList.remove('input-erro');
         }
     });
+
     if (!valido) return;
 
-    // Validação de email
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
         document.getElementById('inputEmail').classList.add('input-erro');
         return;
     }
+
+    const body = {
+        nome,
+        matricula,
+        email,
+        cursos: [{ cursoId }],
+        dataPrevistaColacao
+    };
 
     const btnSalvar = document.getElementById('btnSalvar');
     btnSalvar.disabled = true;
     btnSalvar.textContent = 'Salvando...';
 
     try {
+        let res;
+
         if (modoEdicao) {
-            // Editar
-            const idx = alunos.findIndex(a => a.id === modoEdicao);
-            alunos[idx] = { ...alunos[idx], nome, matricula, email, curso };
-            try { await api.put(`/alunos/${modoEdicao}`, alunos[idx]); } catch (e) { persistirLocal(); }
-            mostrarToast('Aluno atualizado com sucesso!');
+            res = await apiFetch(`/api/alunos/${modoEdicao}`, {
+                method: 'PATCH',
+                body: JSON.stringify(body)
+            });
         } else {
-            // Novo
-            const novo = { nome, matricula, email, curso };
-
-            const res = await apiFetch('/api/alunos', {
+            res = await apiFetch('/api/alunos', {
                 method: 'POST',
-                body: JSON.stringify(novo)
-        });
-
-            const data = await res.json();
-
-            if (!res.ok) {
-                alert(data.message || data.erro || 'Erro ao cadastrar aluno.');
-                return;
+                body: JSON.stringify(body)
+            });
         }
 
-            mostrarToast('Aluno cadastrado com sucesso!');
-            await carregarAlunos();
+        const data = await res.json().catch(() => ({}));
+
+        if (!res.ok) {
+            alert(data.message || data.errors?.join(', ') || 'Erro ao salvar aluno.');
+            return;
         }
 
+        mostrarToast(modoEdicao ? 'Aluno atualizado com sucesso!' : 'Aluno cadastrado com sucesso!');
         fecharModal();
-        renderTabela(alunos);
+        await carregarAlunos();
 
+    } catch (e) {
+        console.error('Erro ao salvar aluno:', e);
+        alert('Erro ao salvar aluno.');
     } finally {
         btnSalvar.disabled = false;
         btnSalvar.textContent = modoEdicao ? 'Atualizar' : 'Salvar';
@@ -198,11 +304,25 @@ async function salvarAluno() {
 async function excluirAluno(id) {
     if (!confirm('Tem certeza que deseja excluir este aluno?')) return;
 
-    alunos = alunos.filter(a => a.id !== id);
-    try { await api.delete(`/alunos/${id}`); } catch (e) { persistirLocal(); }
+    try {
+        const res = await apiFetch(`/api/alunos/${id}`, {
+            method: 'DELETE'
+        });
 
-    renderTabela(alunos);
-    mostrarToast('Aluno removido.');
+        const data = await res.json().catch(() => ({}));
+
+        if (!res.ok) {
+            alert(data.message || data.errors?.join(', ') || 'Erro ao excluir aluno.');
+            return;
+        }
+
+        mostrarToast('Aluno removido.');
+        await carregarAlunos();
+
+    } catch (e) {
+        console.error('Erro ao excluir aluno:', e);
+        alert('Erro ao excluir aluno.');
+    }
 }
 
 // ── TOAST ─────────────────────────────────────────────────────────────────────
@@ -214,12 +334,8 @@ function mostrarToast(msg) {
 }
 
 // ── HELPERS ───────────────────────────────────────────────────────────────────
-function gerarId() {
-    return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
-}
-
 function escapeHtml(str) {
-    return String(str)
+    return String(str ?? '')
         .replace(/&/g, '&amp;')
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;')
