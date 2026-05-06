@@ -144,29 +144,10 @@ async function salvarCoordenador() {
         mostrarToast(coordEditandoId ? 'Coordenador atualizado!' : 'Coordenador criado com sucesso!');
         await carregarCoordenadores();
 
-    } catch (err) {
-        console.error('Erro ao salvar coordenador:', err);
-
-        // Fallback local (sem backend)
-        if (coordEditandoId) {
-            const idx = coordenadores.findIndex(c => (c._id || c.id) === coordEditandoId);
-            if (idx !== -1) {
-                coordenadores[idx] = { ...coordenadores[idx], ...body };
-            }
-            mostrarToast('Coordenador atualizado! (modo local)');
-        } else {
-            const novoCoord = {
-                id: Date.now().toString(),
-                ...body,
-                createdAt: new Date().toISOString()
-            };
-            coordenadores.unshift(novoCoord);
-            mostrarToast('Coordenador criado! (modo local)');
+         } catch (err) {
+         console.error('Erro ao salvar coordenador:', err);
+        mostrarToast('Erro ao salvar coordenador no banco.');
         }
-
-        fecharModal();
-        renderizarTabela(coordenadores);
-    }
 }
 
 // ── MODAL CONFIRMAÇÃO DE EXCLUSÃO ────────────────────────
@@ -197,14 +178,10 @@ async function deletarCoordenador(id) {
         mostrarToast('Coordenador removido com sucesso!');
         await carregarCoordenadores();
 
-    } catch (err) {
+        } catch (err) {
         console.error('Erro ao deletar coordenador:', err);
-
-        // Fallback local (sem backend)
-        coordenadores = coordenadores.filter(c => (c._id || c.id) !== id);
-        renderizarTabela(coordenadores);
-        mostrarToast('Coordenador removido! (modo local)');
-    }
+        mostrarToast('Erro ao remover coordenador do banco.');
+        }
 }
 
 // ── CARREGAR LISTA ────────────────────────────────────────
@@ -220,43 +197,9 @@ async function carregarCoordenadores() {
 
     } catch (err) {
         console.error('Erro ao carregar coordenadores:', err);
-
-        // Dados de demonstração (quando sem backend)
-        coordenadores = [
-            {
-                id: '1',
-                nome: 'Maria Silva',
-                email: 'maria.silva@kore.com',
-                curso: 'Ciência da Computação',
-                status: 'ativo',
-                createdAt: '2026-01-15T00:00:00.000Z'
-            },
-            {
-                id: '2',
-                nome: 'Roberto Mendes',
-                email: 'roberto.mendes@kore.com',
-                curso: 'Engenharia de Software',
-                status: 'ativo',
-                createdAt: '2026-01-20T00:00:00.000Z'
-            },
-            {
-                id: '3',
-                nome: 'Fernanda Costa',
-                email: 'fernanda.costa@kore.com',
-                curso: 'Sistemas de Informação',
-                status: 'ativo',
-                createdAt: '2026-02-01T00:00:00.000Z'
-            },
-            {
-                id: '4',
-                nome: 'Carlos Eduardo',
-                email: 'carlos.eduardo@kore.com',
-                curso: 'Engenharia da Computação',
-                status: 'inativo',
-                createdAt: '2025-12-10T00:00:00.000Z'
-            }
-        ];
+        coordenadores = [];
         renderizarTabela(coordenadores);
+        mostrarToast('Erro ao carregar coordenadores do banco.');
     }
 }
 

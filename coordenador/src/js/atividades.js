@@ -9,8 +9,13 @@ const eyeIcon = `
     </svg>`;
 
 function labelStatus(status) {
-    const map = { pendente: 'Pendente', aprovada: 'Aprovada', reprovada: 'Reprovada' };
-    return map[status?.toLowerCase()] || status;
+    const map = { 
+        pendente: 'Pendente', 
+        aprovada: 'Aprovada', 
+        reprovada: 'Reprovada' 
+    };
+
+    return map[status?.toLowerCase()] || status || 'Pendente';
 }
 
 function renderizarTabela(atividades) {
@@ -23,6 +28,8 @@ function renderizarTabela(atividades) {
 
     tbody.innerHTML = atividades.map(a => {
         const status = (a.status || 'pendente').toLowerCase();
+        const id = a._id || a.id;
+
         return `
             <tr>
                 <td class="td-aluno">${a.nomeAluno || a.nome || '–'}</td>
@@ -31,9 +38,13 @@ function renderizarTabela(atividades) {
                 <td class="td-carga">${a.cargaHoraria ? a.cargaHoraria + 'h' : '–'}</td>
                 <td><span class="badge ${status}">${labelStatus(status)}</span></td>
                 <td>
-                    <button class="btn-detalhes" onclick="verDetalhes('${a._id || a.id}')">
-                        ${eyeIcon} Ver Detalhes
-                    </button>
+                    ${
+                        id 
+                        ? `<button class="btn-detalhes" onclick="verDetalhes('${id}')">
+                                ${eyeIcon} Ver Detalhes
+                           </button>`
+                        : `<span class="empty-table">Sem ID</span>`
+                    }
                 </td>
             </tr>
         `;
@@ -43,6 +54,9 @@ function renderizarTabela(atividades) {
 function popularCursos(atividades) {
     const cursos = [...new Set(atividades.map(a => a.curso).filter(Boolean))];
     const select = document.getElementById('filtroCurso');
+
+    select.innerHTML = `<option value="">Todos</option>`;
+
     cursos.forEach(curso => {
         const opt = document.createElement('option');
         opt.value = curso;
@@ -57,7 +71,7 @@ function filtrar() {
 
     const filtradas = todasAtividades.filter(a => {
         const matchStatus = !status || (a.status || '').toLowerCase() === status;
-        const matchCurso  = !curso  || a.curso === curso;
+        const matchCurso  = !curso || a.curso === curso;
         return matchStatus && matchCurso;
     });
 
@@ -65,6 +79,11 @@ function filtrar() {
 }
 
 function verDetalhes(id) {
+    if (!id) {
+        alert('Atividade inválida.');
+        return;
+    }
+
     window.location.href = `detalhes.html?id=${id}`;
 }
 
@@ -75,13 +94,15 @@ async function carregarAtividades() {
         if (!res.ok) throw new Error('Erro na resposta');
 
         const data = await res.json();
-        todasAtividades = data.atividades || data;
+
+        todasAtividades = data.atividades || data || [];
 
         popularCursos(todasAtividades);
         renderizarTabela(todasAtividades);
 
     } catch (err) {
         console.error('Erro ao carregar atividades:', err);
+
         document.getElementById('tabelaBody').innerHTML =
             `<tr><td colspan="6" class="empty-table">Erro ao carregar atividades. Tente novamente.</td></tr>`;
     }

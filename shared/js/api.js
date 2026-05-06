@@ -13,19 +13,23 @@ async function apiFetch(endpoint, options = {}) {
             }
         });
 
-        
+        // Token inválido ou expirado
         if (response.status === 401) {
             localStorage.removeItem('token');
             localStorage.removeItem('user');
-            window.location.href = '/index.html';
-            return;
+
+            window.location.href = `${window.location.origin}/index.html`;
+
+            return null;
         }
 
         return response;
 
     } catch (error) {
         console.error('Erro na requisição:', error);
+
         alert('Erro de conexão com o servidor.');
+
         throw error;
     }
 }

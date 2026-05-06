@@ -10,14 +10,18 @@ document.addEventListener('DOMContentLoaded', () => {
 // ── CARREGAR ALUNOS ───────────────────────────────────────────────────────────
 async function carregarAlunos() {
     try {
-        // Tenta buscar da API se existir
-        const dados = await api.get('/alunos');
-        alunos = dados;
+        const res = await apiFetch('/api/alunos');
+
+        if (!res.ok) throw new Error('Erro ao buscar alunos');
+
+        const data = await res.json();
+        alunos = data.alunos || data;
+
     } catch (e) {
-        // Fallback: usa localStorage para persistência local
-        const salvo = localStorage.getItem('kore_alunos');
-        alunos = salvo ? JSON.parse(salvo) : [];
+        console.error('Erro ao carregar alunos:', e);
+        alunos = [];
     }
+
     renderTabela(alunos);
 }
 
@@ -163,10 +167,22 @@ async function salvarAluno() {
             mostrarToast('Aluno atualizado com sucesso!');
         } else {
             // Novo
-            const novo = { id: gerarId(), nome, matricula, email, curso, criadoEm: new Date().toISOString() };
-            alunos.unshift(novo);
-            try { await api.post('/alunos', novo); } catch (e) { persistirLocal(); }
+            const novo = { nome, matricula, email, curso };
+
+            const res = await apiFetch('/api/alunos', {
+                method: 'POST',
+                body: JSON.stringify(novo)
+        });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                alert(data.message || data.erro || 'Erro ao cadastrar aluno.');
+                return;
+        }
+
             mostrarToast('Aluno cadastrado com sucesso!');
+            await carregarAlunos();
         }
 
         fecharModal();
