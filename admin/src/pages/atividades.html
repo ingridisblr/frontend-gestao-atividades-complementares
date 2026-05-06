@@ -9,8 +9,8 @@
     <link rel="stylesheet" href="../../../shared/css/global.css">
     <link rel="stylesheet" href="../css/atividades.css">
 </head>
-<body>
 
+<body>
     <!-- SIDEBAR -->
     <aside class="sidebar">
         <div class="sidebar-logo">
@@ -24,43 +24,57 @@
         <nav class="sidebar-nav">
             <a class="nav-item" href="dashboard.html">
                 <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-                    <rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/>
-                    <rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>
+                    <rect x="3" y="3" width="7" height="7" rx="1.5"/>
+                    <rect x="14" y="3" width="7" height="7" rx="1.5"/>
+                    <rect x="3" y="14" width="7" height="7" rx="1.5"/>
+                    <rect x="14" y="14" width="7" height="7" rx="1.5"/>
                 </svg>
                 Dashboard Geral
             </a>
+
             <a class="nav-item" href="cursos.html">
                 <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-                    <path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/>
+                    <path d="M4 19.5A2.5 2.5 0 016.5 17H20"/>
+                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/>
                 </svg>
                 Cursos
             </a>
+
             <a class="nav-item" href="categorias.html">
                 <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-                    <path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/>
+                    <path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/>
+                    <line x1="7" y1="7" x2="7.01" y2="7"/>
                 </svg>
                 Categorias
             </a>
+
             <a class="nav-item" href="regras.html">
                 <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-                    <circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"/>
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"/>
                 </svg>
                 Regras de CH
             </a>
+
             <a class="nav-item" href="coordenacao.html">
                 <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-                    <circle cx="12" cy="8" r="4"/><path d="M6 20v-2a6 6 0 0112 0v2"/>
+                    <circle cx="12" cy="8" r="4"/>
+                    <path d="M6 20v-2a6 6 0 0112 0v2"/>
                     <path d="M19 11l1.5 1.5L23 10"/>
                 </svg>
                 Coordenação
             </a>
+
             <a class="nav-item" href="alunos.html">
                 <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-                    <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/>
-                    <path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/>
+                    <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
+                    <circle cx="9" cy="7" r="4"/>
+                    <path d="M23 21v-2a4 4 0 00-3-3.87"/>
+                    <path d="M16 3.13a4 4 0 010 7.75"/>
                 </svg>
                 Alunos
             </a>
+
             <a class="nav-item active" href="atividades.html">
                 <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
                     <path d="M9 12h6M9 16h6M7 4H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V6a2 2 0 00-2-2h-2"/>
@@ -68,6 +82,7 @@
                 </svg>
                 Atividades
             </a>
+
             <a class="nav-item" href="auditoria.html">
                 <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
                     <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
@@ -93,6 +108,7 @@
                 <span class="user-name" id="userName">Carregando...</span>
                 <span class="user-email" id="userEmail"></span>
             </div>
+
             <button class="btn-logout" onclick="logout()">
                 <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
                     <path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h6a2 2 0 012 2v1"/>
@@ -102,8 +118,16 @@
         </header>
 
         <main class="content">
-            <h1 class="page-title">Atividades (Visão Global)</h1>
-            <p class="page-subtitle">Visualize, analise e valide os certificados enviados pelos alunos</p>
+            <div class="page-header-row">
+                <div>
+                    <h1 class="page-title">Atividades (Visão Global)</h1>
+                    <p class="page-subtitle">Visualize, envie, analise e valide os certificados dos alunos</p>
+                </div>
+
+                <button class="btn-salvar" onclick="abrirModalEnvio()">
+                    + Enviar atividade
+                </button>
+            </div>
 
             <div class="card filtro-card">
                 <div class="filtro-group">
@@ -143,8 +167,79 @@
         </main>
     </div>
 
-    <div id="modalOverlay" class="modal-overlay" onclick="fecharModal()"></div>
+    <div id="modalOverlay" class="modal-overlay" onclick="fecharTodosModais()"></div>
 
+    <!-- MODAL DE ENVIO -->
+    <section id="modalEnvioAtividade" class="modal modal-atividade" aria-hidden="true">
+        <div class="modal-header">
+            <h3>Enviar Atividade</h3>
+            <button class="modal-close" onclick="fecharModalEnvio()" aria-label="Fechar">
+                <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" width="20" height="20">
+                    <path d="M18 6L6 18M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+
+        <form id="formEnvioAtividade" enctype="multipart/form-data">
+            <div class="modal-body">
+                <div class="detalhes-grid">
+                    <div class="form-group">
+                        <label class="form-label" for="inputAlunoId">Aluno</label>
+                        <select id="inputAlunoId" class="form-input" required>
+                            <option value="">Selecione o aluno</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="inputCursoId">Curso</label>
+                        <select id="inputCursoId" class="form-input" required>
+                            <option value="">Selecione o curso</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="inputCategoriaId">Categoria</label>
+                        <select id="inputCategoriaId" class="form-input" required>
+                            <option value="">Selecione a categoria</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="inputCargaHoraria">Carga horária</label>
+                        <input type="number" id="inputCargaHoraria" class="form-input" min="1" placeholder="Ex.: 20" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="inputTitulo">Título da atividade</label>
+                    <input type="text" id="inputTitulo" class="form-input" placeholder="Ex.: Curso de React" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="inputDescricao">Descrição</label>
+                    <textarea id="inputDescricao" class="form-input" rows="3" placeholder="Descreva a atividade realizada..." required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="inputDataRealizacao">Data de realização</label>
+                    <input type="date" id="inputDataRealizacao" class="form-input" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="inputAnexos">Certificado / Comprovante</label>
+                    <input type="file" id="inputAnexos" class="form-input" accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png" required>
+                    <small class="form-help">Formatos permitidos: PDF, JPG, JPEG ou PNG.</small>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn-cancelar" onclick="fecharModalEnvio()">Cancelar</button>
+                <button type="submit" class="btn-salvar">Enviar atividade</button>
+            </div>
+        </form>
+    </section>
+
+    <!-- MODAL DE ANÁLISE -->
     <section id="modalAtividade" class="modal modal-atividade" aria-hidden="true">
         <div class="modal-header">
             <h3>Análise da Atividade</h3>
