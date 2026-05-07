@@ -1,15 +1,13 @@
-// ── ESTADO ──────────────────────────────────────────────────────────────────
+
 let alunos = [];
 let cursosDisponiveis = [];
 let modoEdicao = null;
 
-// ── INIT ─────────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', async () => {
     await carregarCursos();
     await carregarAlunos();
 });
 
-// ── CURSOS ───────────────────────────────────────────────────────────────────
 async function carregarCursos() {
     try {
         const res = await apiFetch('/api/cursos');
@@ -82,7 +80,6 @@ function obterNomeCursoAluno(aluno) {
     return curso.nome || curso.titulo || curso.codigo || '–';
 }
 
-// ── CARREGAR ALUNOS ───────────────────────────────────────────────────────────
 async function carregarAlunos() {
     try {
         const res = await apiFetch('/api/alunos');
@@ -100,7 +97,6 @@ async function carregarAlunos() {
     renderTabela(alunos);
 }
 
-// ── RENDER TABELA ─────────────────────────────────────────────────────────────
 function renderTabela(lista) {
     const tbody = document.getElementById('tabelaBody');
 
@@ -144,7 +140,6 @@ function renderTabela(lista) {
     }).join('');
 }
 
-// ── BUSCA ─────────────────────────────────────────────────────────────────────
 function buscar() {
     const termo = document.getElementById('campoBusca').value.toLowerCase().trim();
 
@@ -162,7 +157,6 @@ function buscar() {
     renderTabela(filtrado);
 }
 
-// ── MODAL: ABRIR / FECHAR ─────────────────────────────────────────────────────
 function abrirModal() {
     modoEdicao = null;
 
@@ -219,7 +213,6 @@ function limparFormulario() {
     });
 }
 
-// ── SALVAR / ATUALIZAR ALUNO ──────────────────────────────────────────────────
 async function salvarAluno() {
     const nome = document.getElementById('inputNome').value.trim();
     const matricula = document.getElementById('inputMatricula').value.trim();
@@ -300,7 +293,6 @@ async function salvarAluno() {
     }
 }
 
-// ── EXCLUIR ALUNO ─────────────────────────────────────────────────────────────
 async function excluirAluno(id) {
     if (!confirm('Tem certeza que deseja excluir este aluno?')) return;
 
@@ -325,7 +317,6 @@ async function excluirAluno(id) {
     }
 }
 
-// ── TOAST ─────────────────────────────────────────────────────────────────────
 function mostrarToast(msg) {
     const toast = document.getElementById('toast');
     document.getElementById('toastMsg').textContent = msg;
@@ -333,7 +324,7 @@ function mostrarToast(msg) {
     setTimeout(() => toast.classList.remove('show'), 3000);
 }
 
-// ── HELPERS ───────────────────────────────────────────────────────────────────
+
 function escapeHtml(str) {
     return String(str ?? '')
         .replace(/&/g, '&amp;')

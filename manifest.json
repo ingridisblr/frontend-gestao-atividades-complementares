@@ -1,0 +1,42 @@
+{
+    "name": "KORE - Gestão de Atividades Complementares",
+    "short_name": "KORE",
+    "description": "Sistema de gestão de atividades complementares",
+    "start_url": "/index.html",
+    "display": "standalone",
+    "orientation": "portrait-primary",
+    "background_color": "#0f1923",
+    "theme_color": "#00B7B8",
+    "lang": "pt-BR",
+    "scope": "/",
+    "icons": [
+        {
+            "src": "assets/imagens/k-logo1.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "assets/imagens/k-logo1.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ],
+    "screenshots": [],
+    "categories": ["education", "productivity"],
+    "shortcuts": [
+        {
+            "name": "Dashboard",
+            "short_name": "Dashboard",
+            "url": "/admin/src/pages/dashboard.html",
+            "icons": [{ "src": "assets/imagens/k-logo1.png", "sizes": "192x192" }]
+        },
+        {
+            "name": "Atividades",
+            "short_name": "Atividades",
+            "url": "/admin/src/pages/atividades.html",
+            "icons": [{ "src": "assets/imagens/k-logo1.png", "sizes": "192x192" }]
+        }
+    ]
+}

@@ -8,10 +8,18 @@
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../../../shared/css/global.css">
     <link rel="stylesheet" href="../css/cursos.css">
+
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#00B7B8">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="KORE">
+    <link rel="apple-touch-icon" href="/assets/imagens/k-logo1.png">
 </head>
 <body>
 
-    <!-- SIDEBAR -->
+
     <aside class="sidebar">
         <div class="sidebar-logo">
             <img src="../../../assets/imagens/k-logo1.png" alt="KORE" class="sidebar-k-logo">
@@ -86,10 +94,10 @@
         </div>
     </aside>
 
-    <!-- MAIN -->
+  
     <div class="main">
 
-        <!-- TOPBAR -->
+       
         <header class="topbar">
             <div class="topbar-user">
                 <span class="user-name" id="userName">Carregando...</span>
@@ -97,7 +105,7 @@
             </div>
         </header>
 
-        <!-- CONTENT -->
+    
         <main class="content">
             <div class="page-header">
                 <div>
@@ -112,7 +120,7 @@
                 </button>
             </div>
 
-            <!-- TABELA -->
+    
             <div class="card">
                 <table class="tabela">
                     <thead>
@@ -136,7 +144,7 @@
         </main>
     </div>
 
-    <!-- MODAL -->
+  
     <div class="modal-overlay" id="modalOverlay" onclick="fecharModal()"></div>
     <div class="modal" id="modal">
         <div class="modal-header">
@@ -178,13 +186,24 @@
         </div>
     </div>
 
-    <!-- TOAST -->
+  
     <div class="toast" id="toast">
         <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="16" height="16">
             <path d="M20 6L9 17l-5-5"/>
         </svg>
         <span id="toastMsg"></span>
     </div>
+
+    <script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker
+                .register('/sw.js')
+                .then(reg => console.log('[PWA] SW registrado:', reg.scope))
+                .catch(err => console.warn('[PWA] Falha:', err));
+        });
+    }
+</script>
 
     <script src="../../../shared/js/api.js"></script>
     <script src="../../../shared/js/auth.js"></script>

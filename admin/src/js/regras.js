@@ -1,13 +1,13 @@
-// ── ESTADO ──────────────────────────────────────────────────────────────────
+
 let regras = [];
 let modoEdicao = null; // null = novo, id = editar
 
-// ── INIT ─────────────────────────────────────────────────────────────────────
+
 document.addEventListener('DOMContentLoaded', () => {
     carregarRegras();
 });
 
-// ── CARREGAR REGRAS ───────────────────────────────────────────────────────────
+
 async function carregarRegras() {
     try {
         // Tenta buscar da API se existir
@@ -20,12 +20,12 @@ async function carregarRegras() {
     renderTabela(regras);
 }
 
-// ── SALVAR NO LOCALSTORAGE (fallback sem API) ─────────────────────────────────
+
 function persistirLocal() {
     localStorage.setItem('kore_regras', JSON.stringify(regras));
 }
 
-// ── RENDER TABELA ─────────────────────────────────────────────────────────────
+
 function renderTabela(lista) {
     const tbody = document.getElementById('tabelaBody');
 
@@ -63,7 +63,7 @@ function renderTabela(lista) {
         </tr>`).join('');
 }
 
-// ── BUSCAR ───────────────────────────────────────────────────────────────────
+
 function buscar() {
     const termo = document.getElementById('campoBusca').value.toLowerCase();
     const filtradas = regras.filter(r =>
@@ -73,7 +73,7 @@ function buscar() {
     renderTabela(filtradas);
 }
 
-// ── ABRIR MODAL ──────────────────────────────────────────────────────────────
+
 function abrirModal(id = null) {
     modoEdicao = id;
 
@@ -105,7 +105,7 @@ function abrirModal(id = null) {
     document.getElementById('inputCategoria').focus();
 }
 
-// ── FECHAR MODAL ─────────────────────────────────────────────────────────────
+
 function fecharModal() {
     const modal = document.getElementById('modal');
     const overlay = document.getElementById('modalOverlay');
@@ -114,7 +114,7 @@ function fecharModal() {
     modal.classList.remove('open');
 }
 
-// ── SALVAR REGRA ─────────────────────────────────────────────────────────────
+
 async function salvarRegra() {
     const categoria = document.getElementById('inputCategoria').value.trim();
     const minHoras = parseInt(document.getElementById('inputMinHoras').value);
@@ -170,12 +170,10 @@ async function salvarRegra() {
     }
 }
 
-// ── EDITAR REGRA ─────────────────────────────────────────────────
 function editarRegra(id) {
     abrirModal(id);
 }
 
-// ── EXCLUIR REGRA ──────────────────────────────────────────────────
 async function excluirRegra(id) {
     if (!confirm('Tem certeza que deseja excluir esta regra?')) return;
 

@@ -1,53 +1,25 @@
-/* ── BUSCA ── */
-.busca-card {
-    padding: 16px 20px;
-    margin-bottom: 16px;
-}
 
-.busca-wrapper {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
+.td-nome  { font-weight: 500; }
+.td-email { color: var(--text-secondary) !important; font-size: 13px !important; }
 
-.busca-icon {
-    width: 18px;
-    height: 18px;
-    color: var(--text-muted);
-    flex-shrink: 0;
-}
 
-.busca-input {
-    flex: 1;
-    border: none;
-    outline: none;
-    font-size: 14px;
-    font-family: 'DM Sans', sans-serif;
-    color: var(--text-primary);
-    background: transparent;
-}
-
-.busca-input::placeholder { color: var(--text-muted); }
-
-/* ── BADGE MATRÍCULA ── */
 .badge-matricula {
     display: inline-block;
     padding: 3px 10px;
     background: #eff6ff;
-    color: #00B7B8;
+    color: var(--brand);
     border-radius: 6px;
     font-size: 13px;
     font-family: 'DM Mono', monospace;
     font-weight: 500;
 }
 
-/* ── BOTÃO NOVO ALUNO ── */
 .btn-novo {
-    display: flex;
+    display: inline-flex;
     align-items: center;
     gap: 8px;
     padding: 10px 20px;
-    background: #00B7B8;
+    background: var(--brand);
     color: #fff;
     border: none;
     border-radius: 8px;
@@ -58,24 +30,50 @@
     transition: background 0.15s;
     white-space: nowrap;
     flex-shrink: 0;
+    min-height: 44px; 
 }
 
-.btn-novo:hover { background: #009494; }
 
-/* ── COLUNAS ESPECÍFICAS ── */
-.td-nome  { font-weight: 500; }
-.td-email { color: var(--text-secondary) !important; font-size: 13px !important; }
+.btn-novo:hover { background: var(--brand-dark); }
 
-/* Campo com erro de validação */
-.form-input.input-erro {
-    border-color: #dc2626;
+
+.coord-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: #ede9fe;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
 }
-.form-input.input-erro:focus {
-    border-color: #dc2626;
+
+.coord-avatar svg { color: #7c3aed; }
+
+.td-nome-cell {
+    display: flex;
+    align-items: center;
+    gap: 12px;
 }
- 
-/* Botão salvar desabilitado */
-.btn-salvar:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
+
+.td-nome-text {
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.badge-status {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.badge-status.ativo   { background: var(--approved-bg); color: var(--approved-color); }
+.badge-status.inativo { background: #f1f5f9; color: var(--text-secondary); }
+
+
+@media (max-width: 768px) {
+    .btn-novo { width: 100%; justify-content: center; }
 }

@@ -13,7 +13,7 @@ async function apiFetch(endpoint, options = {}) {
             }
         });
 
-        // Token inválido ou expirado
+
         if (response.status === 401) {
             localStorage.removeItem('token');
             localStorage.removeItem('user');

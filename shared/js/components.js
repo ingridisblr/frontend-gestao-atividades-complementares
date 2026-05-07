@@ -5,7 +5,7 @@ function renderTopbar() {
 }
 
 function renderSidebar() {
-    const paginaAtual = window.location.pathname.split('/').pop(); // ex: "dashboard.html"
+    const paginaAtual = window.location.pathname.split('/').pop(); 
 
     document.querySelectorAll('.nav-item').forEach(item => {
         const href = item.getAttribute('href');

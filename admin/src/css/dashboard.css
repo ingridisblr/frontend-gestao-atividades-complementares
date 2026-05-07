@@ -1,4 +1,4 @@
-/* ── STAT CARDS ── */
+
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -17,9 +17,7 @@
     transition: box-shadow 0.2s;
 }
 
-.stat-card:hover {
-    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
-}
+.stat-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
 
 .stat-info .stat-label {
     font-size: 13px;
@@ -61,10 +59,8 @@
 .stat-icon.hours    { background: var(--hours-bg);    color: var(--hours-color); }
 .stat-icon.students { background: var(--students-bg); color: var(--students-color); }
 
-/* ── ATIVIDADES RECENTES ── */
-.recentes-list {
-    list-style: none;
-}
+
+.recentes-list { list-style: none; }
 
 .recentes-item {
     display: flex;
@@ -75,19 +71,14 @@
     transition: background 0.15s;
 }
 
-.recentes-item:last-child {
-    border-bottom: none;
-}
-
-.recentes-item:hover {
-    background: #fafbfc;
-}
+.recentes-item:last-child { border-bottom: none; }
+.recentes-item:hover      { background: #fafbfc; }
 
 .recentes-info .recentes-nome {
     font-size: 14px;
     font-weight: 600;
     color: var(--text-primary);
-    margin-bottom: 4px;
+    margin-bottom: 3px;
 }
 
 .recentes-info .recentes-detalhe {
@@ -95,17 +86,10 @@
     color: var(--text-secondary);
 }
 
-.badge {
-    display: inline-block;
-    padding: 4px 14px;
-    border-radius: 999px;
-    font-size: 13px;
-    font-weight: 500;
-}
-
 .badge.pendente  { background: var(--pending-bg);  color: var(--pending-color); }
 .badge.aprovada  { background: var(--approved-bg); color: var(--approved-color); }
 .badge.reprovada { background: var(--rejected-bg); color: var(--rejected-color); }
+
 
 .charts-grid {
     display: grid;
@@ -151,48 +135,11 @@
     flex-shrink: 0;
 }
 
-/* ── ATIVIDADES RECENTES ── */
-.recentes-list {
-    list-style: none;
+@media (max-width: 900px) {
+    .stats-grid  { grid-template-columns: 1fr 1fr; }
+    .charts-grid { grid-template-columns: 1fr; }
 }
 
-.recentes-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 18px 24px;
-    border-bottom: 1px solid var(--border);
-    transition: background 0.15s;
+@media (max-width: 540px) {
+    .stats-grid { grid-template-columns: 1fr; }
 }
-
-.recentes-item:last-child {
-    border-bottom: none;
-}
-
-.recentes-item:hover {
-    background: #fafbfc;
-}
-
-.recentes-info .recentes-nome {
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--text-primary);
-    margin-bottom: 3px;
-}
-
-.recentes-info .recentes-detalhe {
-    font-size: 13px;
-    color: var(--text-secondary);
-}
-
-.badge {
-    display: inline-block;
-    padding: 4px 14px;
-    border-radius: 999px;
-    font-size: 13px;
-    font-weight: 500;
-}
-
-.badge.pendente  { background: var(--pending-bg);  color: var(--pending-color); }
-.badge.aprovada  { background: var(--approved-bg); color: var(--approved-color); }
-.badge.reprovada { background: var(--rejected-bg); color: var(--rejected-color); }
