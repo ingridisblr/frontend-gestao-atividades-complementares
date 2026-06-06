@@ -1,11 +1,11 @@
-﻿let todasAtividades = [];
+let todasAtividades = [];
 let atividadeSelecionada = null;
 
 if (typeof verificarAuth === 'function') {
     verificarAuth();
 }
 
-function textoSeguro(valor, fallback = 'â€“') {
+function textoSeguro(valor, fallback = '–') {
     return valor === undefined || valor === null || valor === '' ? fallback : String(valor);
 }
 
@@ -16,8 +16,8 @@ function normalizarStatus(status) {
         'pendente': 'enviada',
         'enviado': 'enviada',
         'enviada': 'enviada',
-        'em anÃ¡lise': 'em anÃ¡lise',
-        'em analise': 'em anÃ¡lise',
+        'em análise': 'em análise',
+        'em analise': 'em análise',
         'aprovada': 'aprovada',
         'aprovado': 'aprovada',
         'reprovada': 'reprovada',
@@ -34,7 +34,7 @@ function classeStatus(status) {
 function labelStatus(status) {
     const map = {
         'enviada': 'Enviada',
-        'em anÃ¡lise': 'Em anÃ¡lise',
+        'em análise': 'Em análise',
         'aprovada': 'Aprovada',
         'reprovada': 'Reprovada'
     };
@@ -43,10 +43,10 @@ function labelStatus(status) {
 }
 
 function formatarData(data) {
-    if (!data) return 'â€“';
+    if (!data) return '–';
 
     const d = new Date(data);
-    if (Number.isNaN(d.getTime())) return 'â€“';
+    if (Number.isNaN(d.getTime())) return '–';
 
     return d.toLocaleDateString('pt-BR', {
         day: '2-digit',
@@ -65,10 +65,6 @@ function obterCurso(a) {
 
 function obterCategoria(a) {
     return textoSeguro(a.categoriaId?.nome || a.categoria?.nome || a.nomeCategoria || a.categoria);
-}
-
-function obterAreaCategoria(a) {
-    return textoSeguro(a.categoriaId?.areaParametro || a.categoria?.areaParametro || a.areaParametroCategoria || a.areaParametro);
 }
 
 function obterHoras(a) {
@@ -134,15 +130,14 @@ function renderizarTabela(atividades) {
                 <td class="td-aluno">${obterAluno(a)}</td>
                 <td class="td-curso">${obterCurso(a)}</td>
                 <td>${obterCategoria(a)}</td>
-                <td>${obterAreaCategoria(a)}</td>
-                <td class="td-horas">${horas !== '' ? `${horas}h` : 'â€“'}</td>
+                <td class="td-horas">${horas !== '' ? `${horas}h` : '–'}</td>
                 <td><span class="badge ${classeStatus(status)}">${labelStatus(status)}</span></td>
                 <td class="td-data">${formatarData(obterData(a))}</td>
                 <td>
                     ${id ? `
                         <button class="btn-detalhes" onclick="abrirModal('${id}')">
                             Ver detalhes
-                        </button>` : 'â€“'}
+                        </button>` : '–'}
                 </td>
             </tr>
         `;
@@ -194,7 +189,7 @@ function abrirModal(id) {
     atividadeSelecionada = todasAtividades.find(a => String(a._id || a.id) === String(id));
 
     if (!atividadeSelecionada) {
-        alert('Atividade nÃ£o encontrada.');
+        alert('Atividade não encontrada.');
         return;
     }
 
@@ -208,8 +203,7 @@ function abrirModal(id) {
     document.getElementById('detalheAluno').textContent = obterAluno(a);
     document.getElementById('detalheCurso').textContent = obterCurso(a);
     document.getElementById('detalheCategoria').textContent = obterCategoria(a);
-    document.getElementById('detalheAreaCategoria').textContent = obterAreaCategoria(a);
-    document.getElementById('detalheHoras').textContent = horas !== '' ? `${horas}h` : 'â€“';
+    document.getElementById('detalheHoras').textContent = horas !== '' ? `${horas}h` : '–';
     document.getElementById('detalheStatus').textContent = labelStatus(a.status);
     document.getElementById('detalheData').textContent = formatarData(obterData(a));
     document.getElementById('detalheTitulo').textContent = obterTitulo(a);
@@ -267,7 +261,7 @@ async function atualizarStatus(novoStatus) {
     const justificativaReprovacao = document.getElementById('justificativaReprovacao').value.trim();
 
     if (!id) {
-        alert('Atividade invÃ¡lida.');
+        alert('Atividade inválida.');
         return;
     }
 
@@ -310,5 +304,3 @@ async function atualizarStatus(novoStatus) {
 }
 
 document.addEventListener('DOMContentLoaded', carregarAtividades);
-
-
