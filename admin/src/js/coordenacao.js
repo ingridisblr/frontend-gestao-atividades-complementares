@@ -1,4 +1,4 @@
-
+﻿
 const icoEditar = `<svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" width="17" height="17">
     <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
     <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
@@ -30,16 +30,11 @@ function mostrarToast(msg) {
 }
 
 function formatarData(iso) {
-    if (!iso) return '–';
+    if (!iso) return 'â€“';
     return new Date(iso).toLocaleDateString('pt-BR');
 }
 
-function gerarCodigoUsuario(email) {
-    return email
-        .split('@')[0]
-        .replace(/[^a-zA-Z0-9]/g, '')
-        .toUpperCase();
-}
+
 
 function obterIdCursoCoordenado(coord) {
     const primeiro = coord?.cursosCoordenados?.[0];
@@ -57,7 +52,7 @@ function obterIdCursoCoordenado(coord) {
 }
 
 function obterCurso(coord) {
-    if (!coord?.cursosCoordenados?.length) return '–';
+    if (!coord?.cursosCoordenados?.length) return 'â€“';
 
     return coord.cursosCoordenados
         .map(item => {
@@ -131,10 +126,11 @@ function renderizarTabela(lista) {
                 <td>
                     <div class="td-nome-cell">
                         <div class="coord-avatar">${icoAvatar}</div>
-                        <span class="td-nome-text">${c.nome || '–'}</span>
+                        <span class="td-nome-text">${c.nome || 'â€“'}</span>
                     </div>
                 </td>
-                <td class="td-email">${c.email || '–'}</td>
+                <td><span class="badge-codigo">${c.codigoUsuario || '–'}</span></td>
+                <td class="td-email">${c.email || 'â€“'}</td>
                 <td>${obterCurso(c)}</td>
                 <td>
                     <span class="badge-status ${status}">
@@ -164,6 +160,7 @@ function abrirModal(coord = null) {
 
     document.getElementById('modalTitulo').textContent = coord ? 'Editar Coordenador' : 'Novo Coordenador';
     document.getElementById('inputNome').value = coord?.nome || '';
+    document.getElementById('inputMatricula').value = coord?.codigoUsuario || '';
     document.getElementById('inputEmail').value = coord?.email || '';
     document.getElementById('inputStatus').value = coord?.ativo === false ? 'inativo' : 'ativo';
 
@@ -186,20 +183,20 @@ function editarCoordenador(coord) {
 
 async function salvarCoordenador() {
     const nome = document.getElementById('inputNome').value.trim();
+    const matricula = document.getElementById('inputMatricula').value.trim().toUpperCase();
     const email = document.getElementById('inputEmail').value.trim();
     const cursoId = document.getElementById('inputCurso').value;
     const status = document.getElementById('inputStatus').value;
 
     if (!nome || !email || !cursoId) {
-        mostrarToast('Preencha todos os campos obrigatórios.');
+        mostrarToast('Preencha todos os campos obrigatÃ³rios.');
         return;
     }
 
     const body = {
-        codigoUsuario: gerarCodigoUsuario(email),
+        codigoUsuario: matricula,
         nome,
         email,
-        senhaHash: '123456',
         perfis: ['coordenador'],
         ativo: status === 'ativo',
         cursosCoordenados: [{ cursoId }]
@@ -209,7 +206,6 @@ async function salvarCoordenador() {
         let res;
 
         if (coordEditandoId) {
-            delete body.senhaHash;
 
             res = await apiFetch(`/api/usuarios/${coordEditandoId}`, {
                 method: 'PATCH',
@@ -306,3 +302,7 @@ async function inicializar() {
 }
 
 inicializar();
+
+
+
+
