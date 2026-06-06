@@ -144,7 +144,7 @@ function obterDadosMockados() {
     ];
 }
 
-// Preenchimento opcional do Header caso sua aplicação não rode globalmente
+
 function renderHeaderUser() {
     const nameEl = document.getElementById("userName");
     const emailEl = document.getElementById("userEmail");
