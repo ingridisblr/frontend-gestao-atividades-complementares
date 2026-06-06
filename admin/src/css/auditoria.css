@@ -1,0 +1,114 @@
+/* Estilização da lista que fica dentro do Popup */
+.info-card-list {
+    list-style: none;
+    padding-left: 4px;
+}
+
+.info-card-list li {
+    font-size: 14px;
+    color: #1e40af;
+    margin-bottom: 10px;
+    position: relative;
+    padding-left: 18px;
+    line-height: 1.4;
+}
+
+.info-card-list li::before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    color: #3b82f6;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.info-card-list li:last-child {
+    margin-bottom: 0;
+}
+
+.filtros-card-auditoria {
+    padding: 16px 20px;
+    margin-bottom: 20px;
+}
+
+.filtros-grid-auditoria {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 16px;
+    align-items: center;
+}
+
+.stats-grid-auditoria {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.stat-card-auditoria {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 102px;
+}
+
+.stat-label-auditoria {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: 10px;
+}
+
+.stat-value-auditoria {
+    font-size: 32px;
+    font-weight: 600;
+    line-height: 1;
+}
+
+.text-total { color: #1a2332; }
+.text-approved { color: #10b981; }
+.text-rejected { color: #ef4444; }
+.text-hours { color: #2563eb; }
+
+.user-info-cell {
+    display: flex;
+    flex-direction: column;
+}
+
+.user-title {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.user-subid {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 2px;
+}
+
+.badge-acao {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-size: 12.5px;
+    font-weight: 500;
+    text-align: center;
+}
+
+.badge-acao.visualizacao { background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }
+.badge-acao.aprovacao     { background: #dcfce7; color: #15803d; }
+.badge-acao.reprovao      { background: #fee2e2; color: #b91c1c; }
+.badge-acao.atualizacao   { background: #ffedd5; color: #c2410c; }
+
+@media (max-width: 960px) {
+    .stats-grid-auditoria { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 680px) {
+    .filtros-grid-auditoria { grid-template-columns: 1fr; }
+    .stats-grid-auditoria { grid-template-columns: 1fr; }
+}
