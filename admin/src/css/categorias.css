@@ -1,0 +1,57 @@
+﻿.td-nome { font-weight: 500; }
+
+.badge-codigo {
+    display: inline-block;
+    padding: 3px 10px;
+    background: #eff6ff;
+    color: #3b82f6;
+    border-radius: 6px;
+    font-size: 12px;
+    font-family: 'DM Mono', monospace;
+    font-weight: 500;
+}
+
+.badge-area {
+    display: inline-block;
+    padding: 4px 10px;
+    background: #ecfeff;
+    color: var(--brand);
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.badge-status {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.badge-status.ativo { background: var(--approved-bg); color: var(--approved-color); }
+.badge-status.inativo { background: var(--rejected-bg); color: var(--rejected-color); }
+
+.btn-novo {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: #3b82f6;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+    white-space: nowrap;
+    min-height: 44px;
+}
+
+.btn-novo:hover { background: #00B7B8; }
+
+@media (max-width: 768px) {
+    .btn-novo { width: 100%; justify-content: center; }
+}

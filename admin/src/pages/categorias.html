@@ -1,0 +1,138 @@
+﻿<!DOCTYPE html>
+<html lang="pt-pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="../../../assets/imagens/k-logo1.png">
+    <title>KORE - Categorias</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../../shared/css/global.css">
+    <link rel="stylesheet" href="../css/categorias.css">
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <img src="../../../assets/imagens/k-logo1.png" alt="KORE" class="sidebar-k-logo">
+            <div>
+                <div class="brand-name">KORE</div>
+                <div class="brand-sub">Administração</div>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a class="nav-item" href="dashboard.html">Dashboard Geral</a>
+            <a class="nav-item" href="cursos.html">Cursos</a>
+            <a class="nav-item active" href="categorias.html">Categorias</a>
+            <a class="nav-item" href="regras.html">Regras de CH</a>
+            <a class="nav-item" href="coordenacao.html">Coordenação</a>
+            <a class="nav-item" href="alunos.html">Alunos</a>
+            <a class="nav-item" href="atividades.html">Atividades</a>
+            <a class="nav-item" href="auditoria.html">Auditoria</a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="nav-item" onclick="logout()" style="color:#ef4444">Sair</div>
+        </div>
+    </aside>
+
+    <div class="main">
+        <header class="topbar">
+            <div class="topbar-user">
+                <span class="user-name" id="userName">Carregando...</span>
+                <span class="user-email" id="userEmail"></span>
+            </div>
+        </header>
+
+        <main class="content">
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Categorias</h1>
+                    <p class="page-subtitle">Cadastre categorias de atividades por curso</p>
+                </div>
+                <button class="btn-novo" onclick="abrirModal()">Nova Categoria</button>
+            </div>
+
+            <div class="card">
+                <table class="tabela">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Código</th>
+                            <th>Curso</th>
+                            <th>Área</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelaBody">
+                        <tr>
+                            <td colspan="6" class="loading-cell">
+                                <div class="skeleton skeleton-text" style="width:40%;margin:0 auto"></div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <div class="modal-overlay" id="modalOverlay" onclick="fecharModal()"></div>
+    <div class="modal" id="modal">
+        <div class="modal-header">
+            <h3 id="modalTitulo">Nova Categoria</h3>
+            <button class="modal-close" onclick="fecharModal()">×</button>
+        </div>
+
+        <div class="modal-body">
+            <div class="form-group">
+                <label class="form-label">Nome da categoria</label>
+                <input type="text" id="inputNome" class="form-input" placeholder="Ex: Cursos Livres">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Código</label>
+                <input type="text" id="inputCodigo" class="form-input" placeholder="Ex: CURSOS_LIVRES">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Curso</label>
+                <select id="inputCurso" class="form-input">
+                    <option value="">Carregando cursos...</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Área/parâmetro</label>
+                <input type="text" id="inputArea" class="form-input" placeholder="Ex: Formação Complementar">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Descrição</label>
+                <textarea id="inputDescricao" class="form-input" rows="3" placeholder="Descrição da categoria"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Status</label>
+                <select id="inputStatus" class="form-input">
+                    <option value="ativo">Ativa</option>
+                    <option value="inativo">Inativa</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <button class="btn-cancelar" onclick="fecharModal()">Cancelar</button>
+            <button class="btn-salvar" onclick="salvarCategoria()">Salvar</button>
+        </div>
+    </div>
+
+    <div class="toast" id="toast">
+        <span id="toastMsg"></span>
+    </div>
+
+    <script src="../../../shared/js/api.js"></script>
+    <script src="../../../shared/js/auth.js"></script>
+    <script src="../../../shared/js/components.js"></script>
+    <script src="../js/categorias.js"></script>
+</body>
+</html>
