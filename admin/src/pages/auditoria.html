@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="pt-pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="../../../assets/imagens/k-logo1.png">
+    <title>KORE - Auditoria do Sistema</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../../shared/css/global.css">
+    <link rel="stylesheet" href="../css/auditoria.css">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#00B7B8">
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <img src="../../../assets/imagens/k-logo1.png" alt="KORE" class="sidebar-k-logo">
+            <div>
+                <div class="brand-name">KORE</div>
+                <div class="brand-sub">Administração</div>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a class="nav-item" href="dashboard.html">
+                <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                    <rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/>
+                    <rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>
+                </svg>
+                Dashboard Geral
+            </a>
+            <a class="nav-item" href="cursos.html">
+                <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                    <path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/>
+                </svg>
+                Cursos
+            </a>
+            <a class="nav-item" href="categorias.html">
+                <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                    <path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/>
+                </svg>
+                Categorias
+            </a>
+            <a class="nav-item" href="regras.html">
+                <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"/>
+                </svg>
+                Regras de CH
+            </a>
+            <a class="nav-item" href="coordenacao.html">
+                <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                    <circle cx="12" cy="8" r="4"/><path d="M6 20v-2a6 6 0 0112 0v2"/>
+                    <path d="M19 11l1.5 1.5L23 10"/>
+                </svg>
+                Coordenação
+            </a>
+            <a class="nav-item" href="alunos.html">
+                <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                    <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/>
+                    <path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/>
+                </svg>
+                Alunos
+            </a>
+            <a class="nav-item" href="atividades.html">
+                <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                    <path d="M9 12h6M9 16h6M7 4H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V6a2 2 0 00-2-2h-2"/>
+                    <path d="M9 4h6v4H9V4z"/>
+                </svg>
+                Atividades
+            </a>
+            <a class="nav-item active" href="auditoria.html">
+                <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                </svg>
+                Auditoria
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="nav-item" onclick="logout()" style="color:#ef4444">
+                <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                    <path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h6a2 2 0 012 2v1"/>
+                </svg>
+                Sair
+            </div>
+        </div>
+    </aside>
+
+    <div class="main">
+        <header class="topbar">
+            <div class="topbar-user">
+                <span class="user-name" id="userName">Carregando...</span>
+                <span class="user-email" id="userEmail"></span>
+            </div>
+        </header>
+
+        <main class="content">
+            <h1 class="page-title">Auditoria do Sistema</h1>
+            <p class="page-subtitle">Visualize o histórico completo de ações realizadas no sistema</p>
+
+<!-- Modal de Informações sobre Auditoria (Popup) -->
+<div class="modal-overlay" id="modalInfoOverlay"></div>
+<div class="modal" id="modalInfoAuditoria">
+    <div class="modal-header" style="background-color: #f0f7ff; border-bottom: 1px solid #bae6fd;">
+        <div class="modal-titulo" style="color: #1d4ed8; display: flex; align-items: center; gap: 8px;">
+            <svg class="info-icon" fill="currentColor" viewBox="0 0 24 24" style="width: 18px; height: 18px;">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+            </svg>
+            <span>Informações sobre auditoria</span>
+        </div>
+        <button class="modal-fechar" id="btnFecharModalInfo">&times;</button>
+    </div>
+    <div class="modal-body" style="background-color: #f0f7ff;">
+        <ul class="info-card-list">
+            <li>Todas as ações críticas do sistema são registradas automaticamente</li>
+            <li>Os logs são permanentes e não podem ser editados ou excluídos</li>
+            <li>Use os filtros para encontrar ações específicas rapidamente</li>
+            <li>Em caso de dúvidas, entre em contato com o administrador do sistema</li>
+        </ul>
+    </div>
+    <div class="modal-footer" style="background-color: #f0f7ff; border-top: 1px solid #bae6fd;">
+        <button class="btn-salvar" id="btnEntendidoModalInfo" style="background-color: #2563eb;">Entendido</button>
+    </div>
+</div>
+
+            <div class="card filtros-card-auditoria">
+                <div class="filtros-grid-auditoria">
+                    <div class="busca-wrapper">
+                        <svg class="busca-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                        <input type="text" id="inputBuscaAuditoria" class="busca-input" placeholder="Buscar por usuário, ação ou detalhes...">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <select id="selectFiltroAcao" class="form-input">
+                            <option value="">Todas as ações</option>
+                            <option value="Visualização">Visualização</option>
+                            <option value="Aprovação">Aprovação</option>
+                            <option value="Reprovação">Reprovação</option>
+                            <option value="Atualização">Atualização</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stats-grid-auditoria">
+                <div class="stat-card-auditoria">
+                    <div class="stat-label-auditoria">Total de Registros</div>
+                    <div class="stat-value-auditoria text-total" id="countTotal">–</div>
+                </div>
+                <div class="stat-card-auditoria">
+                    <div class="stat-label-auditoria">Aprovações</div>
+                    <div class="stat-value-auditoria text-approved" id="countAprovacoes">–</div>
+                </div>
+                <div class="stat-card-auditoria">
+                    <div class="stat-label-auditoria">Reprovações</div>
+                    <div class="stat-value-auditoria text-rejected" id="countReprovacoes">–</div>
+                </div>
+                <div class="stat-card-auditoria">
+                    <div class="stat-label-auditoria">Últimas 24h</div>
+                    <div class="stat-value-auditoria text-hours" id="count24h">–</div>
+                </div>
+            </div>
+
+
+            <div class="card" style="margin-top: 16px;">
+                <div class="card-header">
+                    <h2 id="tituloHistorico">Histórico de Ações (0)</h2>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table class="tabela">
+                        <thead>
+                            <tr>
+                                <th style="width: 20%;">Data/Hora</th>
+                                <th style="width: 25%;">Usuário</th>
+                                <th style="width: 15%;">Ação</th>
+                                <th style="width: 40%;">Detalhes</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelaAuditoriaBody">
+                            <tr>
+                                <td colspan="4" class="loading-cell">Carregando registros de auditoria...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../../../shared/js/api.js"></script>
+    <script src="../../../shared/js/auth.js"></script>
+    <script src="../../../shared/js/components.js"></script>
+    <script src="../js/auditoria.js"></script>
+</body>
+</html>
