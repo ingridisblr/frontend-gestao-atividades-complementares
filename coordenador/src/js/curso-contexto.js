@@ -1,4 +1,4 @@
-const COORD_CURSO_STORAGE_KEY = 'coordCursoSelecionadoId';
+﻿const COORD_CURSO_STORAGE_KEY = 'coordCursoSelecionadoId';
 
 function coordUser() {
     return JSON.parse(localStorage.getItem('user') || localStorage.getItem('usuario') || '{}');
@@ -30,7 +30,7 @@ async function coordSincronizarUsuarioDaApi() {
             return usuario;
         }
     } catch (error) {
-        console.warn('Não foi possível atualizar dados do coordenador autenticado:', error);
+        console.warn('NÃ£o foi possÃ­vel atualizar dados do coordenador autenticado:', error);
     }
 
     return coordUser();
@@ -67,8 +67,9 @@ function coordCursoNome(item, cursos = []) {
 
 function coordCursosCoordenados(cursosBase = []) {
     const cursosUsuario = coordUser().cursosCoordenados || [];
+    const fonte = cursosUsuario.length ? cursosUsuario : (coordEhCoordenador() ? cursosBase : []);
 
-    return cursosUsuario
+    return fonte
         .map(item => {
             const id = coordCursoId(item);
             if (!id) return null;
@@ -158,3 +159,4 @@ function coordFiltrarAlunosCursoSelecionado(alunos, cursosBase = []) {
 
     return alunos.filter(aluno => coordAlunoCursoIds(aluno).some(id => String(id) === String(cursoId)));
 }
+

@@ -1,3 +1,5 @@
+﻿const API_URL = 'https://sistema-gestao-atividades-complementares.onrender.com';
+
 document.getElementById('loginForm').addEventListener('submit', async (e) => {
     e.preventDefault();
 
@@ -5,12 +7,12 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
     const password = document.getElementById('password').value;
 
     try {
-        const res = await fetch('https://sistema-gestao-atividades-complementares.onrender.com/api/auth/login', {
+        const res = await fetch(`${API_URL}/api/auth/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 
-                email, 
-                senha: password 
+            body: JSON.stringify({
+                email,
+                senha: password
             })
         });
 
@@ -21,11 +23,10 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
             return;
         }
 
-        
+        localStorage.removeItem('coordCursoSelecionadoId');
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.usuario));
 
-        
         const perfis = data.usuario.perfis || [];
 
         if (perfis.includes('administrador')) {
@@ -35,10 +36,8 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
         } else {
             alert('Perfil não autorizado.');
         }
-
     } catch (error) {
         console.error('Erro no login:', error);
         alert('Erro de conexão com o servidor.');
     }
-    });
-
+});
