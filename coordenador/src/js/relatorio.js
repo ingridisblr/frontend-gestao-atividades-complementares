@@ -109,6 +109,8 @@ function renderizarRelatorio(lista) {
 
 async function carregarRelatorio() {
     try {
+        await coordSincronizarUsuarioDaApi();
+
         const [resCursos, resAtividades] = await Promise.all([
             apiFetch('/api/cursos'),
             apiFetch('/api/atividades')
@@ -121,7 +123,15 @@ async function carregarRelatorio() {
 
         cursosRelatorio = resCursos.ok ? coordNormalizarLista(dataCursos, 'cursos') : [];
         coordCursoSelecionadoId(cursosRelatorio);
-        atividadesRelatorio = coordFiltrarAtividadesCursoSelecionado(coordNormalizarLista(dataAtividades, 'atividades'), cursosRelatorio);
+
+        const cursoId = coordCursoSelecionadoId(cursosRelatorio);
+        if (cursoId) {
+            const resAtividadesCurso = await apiFetch(`/api/atividades?cursoId=${cursoId}`);
+            const dataAtividadesCurso = await resAtividadesCurso.json().catch(() => ({}));
+            atividadesRelatorio = coordFiltrarAtividadesCursoSelecionado(coordNormalizarLista(dataAtividadesCurso, 'atividades'), cursosRelatorio);
+        } else {
+            atividadesRelatorio = coordFiltrarAtividadesCursoSelecionado(coordNormalizarLista(dataAtividades, 'atividades'), cursosRelatorio);
+        }
 
         aplicarFiltrosRelatorio();
     } catch (error) {

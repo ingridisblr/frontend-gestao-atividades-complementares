@@ -42,6 +42,8 @@ function popularCursosAluno(cursoSelecionado = coordCursoSelecionadoId(cursosCoo
 }
 
 async function carregarCursosCoord() {
+    await coordSincronizarUsuarioDaApi();
+
     const res = await apiFetch('/api/cursos');
     const data = await res.json().catch(() => ({}));
 

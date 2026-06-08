@@ -176,7 +176,8 @@ function filtrar() {
 
 async function carregarAtividades() {
     try {
-        const res = await apiFetch('/api/atividades');
+        const cursoId = coordCursoSelecionadoId(todosCursos);
+        const res = await apiFetch(`/api/atividades${cursoId ? `?cursoId=${cursoId}` : ''}`);
 
         if (!res.ok) throw new Error('Erro ao buscar atividades');
 
@@ -201,6 +202,8 @@ async function carregarAtividades() {
 
 async function carregarDadosFormulario() {
     try {
+        await coordSincronizarUsuarioDaApi();
+
         const [resAlunos, resCursos, resCategorias] = await Promise.all([
             apiFetch('/api/alunos'),
             apiFetch('/api/cursos'),

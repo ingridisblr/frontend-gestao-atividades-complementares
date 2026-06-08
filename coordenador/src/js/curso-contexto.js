@@ -4,6 +4,38 @@ function coordUser() {
     return JSON.parse(localStorage.getItem('user') || localStorage.getItem('usuario') || '{}');
 }
 
+function coordSalvarUser(user) {
+    if (user && typeof user === 'object') {
+        localStorage.setItem('user', JSON.stringify(user));
+    }
+}
+
+function coordEhCoordenador() {
+    const perfis = coordUser().perfis || [];
+    return perfis.includes('coordenador') && !perfis.includes('administrador');
+}
+
+async function coordSincronizarUsuarioDaApi() {
+    if (typeof apiFetch !== 'function') return coordUser();
+
+    try {
+        const res = await apiFetch('/api/auth/me');
+        if (!res || !res.ok) return coordUser();
+
+        const data = await res.json().catch(() => ({}));
+        const usuario = data.usuario || data.user || data.data || data;
+
+        if (usuario && (usuario.id || usuario._id)) {
+            coordSalvarUser(usuario);
+            return usuario;
+        }
+    } catch (error) {
+        console.warn('Não foi possível atualizar dados do coordenador autenticado:', error);
+    }
+
+    return coordUser();
+}
+
 function coordNormalizarLista(data, chave = '') {
     if (Array.isArray(data)) return data;
     if (Array.isArray(data?.data)) return data.data;
@@ -115,14 +147,14 @@ function coordAlunoCursoIds(aluno) {
 
 function coordFiltrarAtividadesCursoSelecionado(atividades, cursosBase = []) {
     const cursoId = coordCursoSelecionadoId(cursosBase);
-    if (!cursoId) return atividades;
+    if (!cursoId) return coordEhCoordenador() ? [] : atividades;
 
     return atividades.filter(atividade => String(coordAtividadeCursoId(atividade)) === String(cursoId));
 }
 
 function coordFiltrarAlunosCursoSelecionado(alunos, cursosBase = []) {
     const cursoId = coordCursoSelecionadoId(cursosBase);
-    if (!cursoId) return alunos;
+    if (!cursoId) return coordEhCoordenador() ? [] : alunos;
 
     return alunos.filter(aluno => coordAlunoCursoIds(aluno).some(id => String(id) === String(cursoId)));
 }

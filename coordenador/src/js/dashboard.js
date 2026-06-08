@@ -170,6 +170,8 @@ function renderizarRecentes(atividades) {
 
 async function carregarCursosBase() {
     try {
+        await coordSincronizarUsuarioDaApi();
+
         const res = await apiFetch('/api/cursos');
         const data = await res.json().catch(() => ({}));
 
@@ -187,7 +189,7 @@ async function carregarDashboard() {
         atualizarCursoAtual();
 
         const [resAtividades, resAlunos] = await Promise.all([
-            apiFetch('/api/atividades'),
+            apiFetch(`/api/atividades${coordCursoSelecionadoId(cursosBase) ? `?cursoId=${coordCursoSelecionadoId(cursosBase)}` : ''}`),
             apiFetch('/api/alunos')
         ]);
 
