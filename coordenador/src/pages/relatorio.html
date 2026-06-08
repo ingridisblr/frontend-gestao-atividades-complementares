@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="pt-pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="../../../assets/imagens/k-logo1.png">
+    <title>KORE - Relatórios e Indicadores</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../../shared/css/global.css">
+    <link rel="stylesheet" href="../css/relatorio.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <img src="../../../assets/imagens/k-logo1.png" alt="KORE" class="sidebar-k-logo">
+            <div>
+                <div class="brand-name">KORE</div>
+                <div class="brand-sub">Coordenação</div>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a class="nav-item" href="dashboard.html">
+                <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                    <rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/>
+                    <rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>
+                </svg>
+                Dashboard
+            </a>
+            <a class="nav-item" href="atividades.html">
+                <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                    <path d="M9 12h6M9 16h6M7 4H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V6a2 2 0 00-2-2h-2"/>
+                    <path d="M9 4h6v4H9V4z"/>
+                </svg>
+                Atividades
+            </a>
+            <a class="nav-item" href="historico.html">
+                <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/>
+                </svg>
+                Histórico
+            </a>
+            <a class="nav-item active" href="relatorio.html">
+                <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                    <path d="M9 17v-2m3 2v-4m3 4V9m-9 8h12M3 21h18M3 3h18v18H3V3z"/>
+                </svg>
+                Relatórios
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="nav-item" onclick="logout()" style="color:#ef4444">
+                <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                    <path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h6a2 2 0 012 2v1"/>
+                </svg>
+                Sair
+            </div>
+        </div>
+    </aside>
+
+    <div class="main">
+        <header class="topbar">
+            <div class="topbar-user">
+                <span class="user-name" id="userName">Carregando...</span>
+                <span class="user-email" id="userEmail"></span>
+            </div>
+            <button class="btn-logout" onclick="logout()">
+                <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                    <path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h6a2 2 0 012 2v1"/>
+                </svg>
+                Sair
+            </button>
+        </header>
+
+        <main class="content">
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Relatórios e Indicadores</h1>
+                    <p class="page-subtitle">Análise de desempenho e estatísticas do sistema</p>
+                </div>
+                <button class="btn-salvar" onclick="exportarRelatorio('completo-pdf')">
+                    <svg style="width: 16px; height: 16px; margin-right: 6px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                    </svg>
+                    Exportar PDF
+                </button>
+            </div>
+
+            <div class="stats-grid-relatorios">
+                <div class="card-metric">
+                    <div class="card-metric-header">
+                        <span class="metric-label">Taxa de Aprovação</span>
+                        <span class="metric-icon approved">
+                            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+                        </span>
+                    </div>
+                    <div class="metric-value text-approved" id="txtTaxaAprovacao">–</div>
+                    <div class="metric-subtext">Atividades aprovadas do total</div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar bg-approved" id="barTaxaAprovacao" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <div class="card-metric">
+                    <div class="card-metric-header">
+                        <span class="metric-label">Média de Horas</span>
+                        <span class="metric-icon hours">
+                            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+                        </span>
+                    </div>
+                    <div class="metric-value text-hours" id="txtMediaHoras">–</div>
+                    <div class="metric-subtext">Por aluno no semestre</div>
+                </div>
+
+                <div class="card-metric">
+                    <div class="card-metric-header">
+                        <span class="metric-label">Meta do Semestre</span>
+                        <span class="metric-icon pending">
+                            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+                        </span>
+                    </div>
+                    <div class="metric-value text-pending" id="txtMetaSemestre">–</div>
+                    <div class="metric-subtext">Das metas foram atingidas</div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar bg-pending" id="barMetaSemestre" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="charts-grid" style="margin-bottom: 16px;">
+                <div class="card chart-card">
+                    <div class="card-header"><h2>Atividades Submetidas por Período</h2></div>
+                    <div class="chart-container-wrapper">
+                        <canvas id="chartSubmissoes"></canvas>
+                    </div>
+                </div>
+                <div class="card chart-card">
+                    <div class="card-header"><h2>Taxa de Aprovação por Período</h2></div>
+                    <div class="chart-container-wrapper">
+                        <canvas id="chartTaxaPeriodo"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card chart-card" style="margin-bottom: 16px;">
+                <div class="card-header"><h2>Média de Horas Complementares por Curso</h2></div>
+                <div class="chart-container-wrapper" style="height: 320px;">
+                    <canvas id="chartHorasCurso"></canvas>
+                </div>
+            </div>
+
+            <div class="card" style="margin-bottom: 16px; padding: 24px;">
+                <h2 style="font-size: 16px; font-weight: 600; margin-bottom: 20px;">Resumo Executivo</h2>
+                
+                <div class="executive-grid">
+                    <div class="executive-item">
+                        <span class="executive-label">Total de alunos ativos</span>
+                        <span class="executive-value" id="execTotalAlunos">–</span>
+                    </div>
+                    <div class="executive-item">
+                        <span class="executive-label">Alunos com pendências</span>
+                        <span class="executive-value text-pending" id="execAlunosPendentes">–</span>
+                    </div>
+                    <div class="executive-item">
+                        <span class="executive-label">Horas totais validadas</span>
+                        <span class="executive-value" id="execHorasValidadas">–</span>
+                    </div>
+                    <div class="executive-item">
+                        <span class="executive-label">Tempo médio de análise</span>
+                        <span class="executive-value" id="execTempoAnalise">–</span>
+                    </div>
+                </div>
+
+                <div class="insights-container">
+                    <div class="insights-header">
+                        <span style="font-size: 16px;">📊</span>
+                        <span>Insights do Período</span>
+                    </div>
+                    <ul class="insights-list" id="listaInsights">
+                        <li class="skeleton-text" style="width: 60%; height: 14px; margin-bottom: 8px;"></li>
+                        <li class="skeleton-text" style="width: 45%; height: 14px;"></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card" style="padding: 24px;">
+                <h2 style="font-size: 16px; font-weight: 600; margin-bottom: 16px;">Opções de Exportação</h2>
+                <div class="export-buttons-flex">
+                    <button class="btn-cancelar btn-export-opt" onclick="exportarRelatorio('completo-pdf')">
+                        <svg class="busca-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                        Relatório Completo (PDF)
+                    </button>
+                    <button class="btn-cancelar btn-export-opt" onclick="exportarRelatorio('curso-pdf')">
+                        <svg class="busca-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                        Relatório por Curso (PDF)
+                    </button>
+                    <button class="btn-cancelar btn-export-opt" onclick="exportarRelatorio('brutos-csv')">
+                        <svg class="busca-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                        Dados Brutos (CSV)
+                    </button>
+                    <button class="btn-cancelar btn-export-opt" onclick="exportarRelatorio('graficos-png')">
+                        <svg class="busca-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                        Gráficos (PNG)
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../../../shared/js/api.js"></script>
+    <script src="../../../shared/js/auth.js"></script>
+    <script src="../../../shared/js/components.js"></script>
+    <script src="../js/relatorio.js"></script>
+</body>
+</html>
