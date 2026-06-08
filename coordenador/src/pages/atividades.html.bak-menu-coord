@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-pt">
 <head>
     <meta charset="UTF-8">
@@ -17,15 +17,31 @@
             <img src="../../../assets/imagens/k-logo1.png" alt="KORE" class="sidebar-k-logo">
             <div>
                 <div class="brand-name">KORE</div>
-                <div class="brand-sub">CoordenaÃ§Ã£o</div>
+                <div class="brand-sub">Coordenação</div>
             </div>
         </div>
 
-                <nav class="sidebar-nav">
-            <a class="nav-item" href="dashboard.html">Dashboard</a>
-            <a class="nav-item" href="alunos.html">Alunos</a>
-            <a class="nav-item active" href="atividades.html">Atividades</a>
-            <a class="nav-item" href="relatorio.html">Relatórios</a>
+        <nav class="sidebar-nav">
+            <a class="nav-item" href="dashboard.html">
+                <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                    <rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/>
+                    <rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>
+                </svg>
+                Dashboard
+            </a>
+            <a class="nav-item active" href="atividades.html">
+                <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                    <path d="M9 12h6M9 16h6M7 4H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V6a2 2 0 00-2-2h-2"/>
+                    <path d="M9 4h6v4H9V4z"/>
+                </svg>
+                Atividades
+            </a>
+            <a class="nav-item" href="historico.html">
+                <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/>
+                </svg>
+                Histórico
+            </a>
         </nav>
 
         <div class="sidebar-footer">
@@ -84,9 +100,9 @@
                             <th>Aluno</th>
                             <th>Curso</th>
                             <th>Categoria</th>
-                            <th>Carga HorÃ¡ria</th>
+                            <th>Carga Horária</th>
                             <th>Status</th>
-                            <th>AÃ§Ãµes</th>
+                            <th>Ações</th>
                         </tr>
                     </thead>
                     <tbody id="tabelaBody">

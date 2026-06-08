@@ -1,0 +1,126 @@
+﻿<!DOCTYPE html>
+<html lang="pt-pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KORE - Alunos</title>
+    <link rel="icon" href="../../../assets/imagens/k-logo1.png">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../../shared/css/global.css">
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <img src="../../../assets/imagens/k-logo1.png" alt="KORE" class="sidebar-k-logo">
+            <div>
+                <div class="brand-name">KORE</div>
+                <div class="brand-sub">Coordenação</div>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a class="nav-item" href="dashboard.html">Dashboard</a>
+            <a class="nav-item active" href="alunos.html">Alunos</a>
+            <a class="nav-item" href="atividades.html">Atividades</a>
+            <a class="nav-item" href="relatorio.html">Relatórios</a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="nav-item" onclick="logout()" style="color:#ef4444">Sair</div>
+        </div>
+    </aside>
+
+    <div class="main">
+        <header class="topbar">
+            <div class="topbar-user">
+                <span class="user-name" id="userName">Carregando...</span>
+                <span class="user-email" id="userEmail"></span>
+            </div>
+            <button class="btn-logout" onclick="logout()">Sair</button>
+        </header>
+
+        <main class="content">
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Alunos</h1>
+                    <p class="page-subtitle">Cadastre e acompanhe alunos dos cursos coordenados</p>
+                </div>
+                <button class="btn-salvar" onclick="abrirModalAluno()">Novo Aluno</button>
+            </div>
+
+            <div class="card busca-card">
+                <div class="busca-wrapper">
+                    <input type="text" id="campoBuscaAluno" class="busca-input" placeholder="Buscar por nome, matrícula ou email">
+                </div>
+            </div>
+
+            <div class="card">
+                <div style="overflow-x: auto;">
+                    <table class="tabela">
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Matrícula</th>
+                                <th>Curso</th>
+                                <th>Email</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelaAlunosBody">
+                            <tr>
+                                <td colspan="5" class="loading-cell">Carregando alunos...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div class="modal-overlay" id="modalAlunoOverlay" onclick="fecharModalAluno()"></div>
+    <div class="modal" id="modalAluno">
+        <div class="modal-header">
+            <h3 id="modalAlunoTitulo">Novo Aluno</h3>
+            <button class="modal-close" onclick="fecharModalAluno()">×</button>
+        </div>
+
+        <div class="modal-body">
+            <div class="form-group">
+                <label class="form-label">Nome completo</label>
+                <input type="text" id="inputAlunoNome" class="form-input">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Matrícula</label>
+                <input type="text" id="inputAlunoMatricula" class="form-input">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Email</label>
+                <input type="email" id="inputAlunoEmail" class="form-input">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Data prevista de colação</label>
+                <input type="date" id="inputAlunoDataColacao" class="form-input">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Curso</label>
+                <select id="inputAlunoCurso" class="form-input">
+                    <option value="">Selecione um curso</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <button class="btn-cancelar" onclick="fecharModalAluno()">Cancelar</button>
+            <button class="btn-salvar" id="btnSalvarAluno" onclick="salvarAlunoCoord()">Salvar</button>
+        </div>
+    </div>
+
+    <script src="../../../shared/js/api.js"></script>
+    <script src="../../../shared/js/auth.js"></script>
+    <script src="../js/alunos.js"></script>
+</body>
+</html>
