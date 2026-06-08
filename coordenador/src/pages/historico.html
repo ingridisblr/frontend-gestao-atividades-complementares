@@ -1,0 +1,122 @@
+﻿<!DOCTYPE html>
+<html lang="pt-pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KORE - Relatórios</title>
+    <link rel="icon" href="../../../assets/imagens/k-logo1.png">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../../shared/css/global.css">
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <img src="../../../assets/imagens/k-logo1.png" alt="KORE" class="sidebar-k-logo">
+            <div>
+                <div class="brand-name">KORE</div>
+                <div class="brand-sub">Coordenação</div>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a class="nav-item" href="dashboard.html">Dashboard</a>
+            <a class="nav-item" href="atividades.html">Atividades</a>
+            <a class="nav-item active" href="historico.html">Relatórios</a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="nav-item" onclick="logout()" style="color:#ef4444">Sair</div>
+        </div>
+    </aside>
+
+    <div class="main">
+        <header class="topbar">
+            <div class="topbar-user">
+                <span class="user-name" id="userName">Carregando...</span>
+                <span class="user-email" id="userEmail"></span>
+            </div>
+        </header>
+
+        <main class="content">
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Relatórios</h1>
+                    <p class="page-subtitle">Resumo das atividades acompanhadas pela coordenação</p>
+                </div>
+                <button class="btn-salvar" id="btnExportarPdf">Exportar PDF</button>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-info">
+                        <div class="stat-label">Total</div>
+                        <div class="stat-value" id="relTotal">–</div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-info">
+                        <div class="stat-label">Aprovadas</div>
+                        <div class="stat-value" id="relAprovadas">–</div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-info">
+                        <div class="stat-label">Horas Validadas</div>
+                        <div class="stat-value" id="relHoras">–</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card filtros-card">
+                <div class="filtros-grid">
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label class="form-label">Status</label>
+                        <select id="filtroStatusRelatorio" class="form-input">
+                            <option value="">Todos</option>
+                            <option value="pendente">Pendentes</option>
+                            <option value="aprovada">Aprovadas</option>
+                            <option value="reprovada">Reprovadas</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label class="form-label">Busca</label>
+                        <input id="buscaRelatorio" class="form-input" placeholder="Aluno, curso, categoria ou título">
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" id="areaRelatorioPdf">
+                <div class="card-header">
+                    <h2 id="tituloRelatorio">Atividades</h2>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table class="tabela">
+                        <thead>
+                            <tr>
+                                <th>Aluno</th>
+                                <th>Curso</th>
+                                <th>Categoria</th>
+                                <th>Status</th>
+                                <th>Horas</th>
+                                <th>Data</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelaRelatorioBody">
+                            <tr>
+                                <td colspan="6" class="loading-cell">Carregando dados...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../../../shared/js/api.js"></script>
+    <script src="../../../shared/js/auth.js"></script>
+    <script src="../js/historico.js"></script>
+</body>
+</html>
