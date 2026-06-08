@@ -101,13 +101,7 @@ document.addEventListener("DOMContentLoaded", () => {
         try {
             tabelaBody.innerHTML = `<tr><td colspan="4" class="loading-cell">Carregando registros de auditoria...</td></tr>`;
 
-            const res = await apiFetch("/api/auditoria?limite=200");
-
-            if (!res || !res.ok) {
-                throw new Error("Erro ao buscar auditoria");
-            }
-
-            const dados = await res.json();
+            const dados = await apiFetch("/api/auditoria?limite=200");
             todosLogs = Array.isArray(dados) ? dados.map(normalizarLog) : [];
 
             atualizarContadores(todosLogs);
@@ -208,4 +202,3 @@ function renderHeaderUser() {
     if (nameEl) nameEl.textContent = userData.nome || "Administrador";
     if (emailEl) emailEl.textContent = userData.email || "admin@kore.com";
 }
-

@@ -1,4 +1,4 @@
-
+﻿
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 
@@ -717,4 +717,44 @@ input[type="file"].form-input { padding: 9px 12px; cursor: pointer; }
 
 @media (max-width: 480px) {
     .stats-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 900px) {
+    .page-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .stat-card {
+        min-width: 0;
+    }
+
+    .activity-item {
+        align-items: flex-start;
+    }
+
+    .activity-detail {
+        overflow-wrap: anywhere;
+    }
+}
+
+@media (max-width: 640px) {
+    .topbar {
+        height: auto;
+        min-height: 64px;
+        padding-top: 12px;
+        padding-bottom: 12px;
+    }
+
+    .stat-card {
+        padding: 18px;
+    }
+
+    .stat-value {
+        font-size: 30px;
+    }
+
+    .activity-item {
+        gap: 10px;
+    }
 }
