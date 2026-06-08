@@ -62,6 +62,10 @@ function obterCurso(a) {
     return a.cursoId?.nome || a.curso?.nome || a.curso || '–';
 }
 
+function obterCursoId(a) {
+    return coordAtividadeCursoId(a);
+}
+
 function obterCategoria(a) {
     return a.categoriaId?.nome || a.categoria?.nome || a.categoria || '–';
 }
@@ -155,9 +159,16 @@ function renderizarTabela(atividades) {
 
 function filtrar() {
     const status = document.getElementById('filtroStatus')?.value.toLowerCase() || '';
+    const curso = document.getElementById('filtroCurso')?.value || coordCursoSelecionadoId(todosCursos);
 
     const filtradas = todasAtividades.filter(a => {
-        return !status || normalizarStatus(a.status) === status;
+        const statusAtividade = normalizarStatus(a.status);
+        const statusOk = !status ||
+            statusAtividade === status ||
+            (status === 'pendente' && ['enviada', 'em análise', 'em anÃ¡lise'].includes(statusAtividade));
+        const cursoOk = !curso || String(obterCursoId(a)) === String(curso);
+
+        return statusOk && cursoOk;
     });
 
     renderizarTabela(filtradas);
@@ -171,9 +182,9 @@ async function carregarAtividades() {
 
         const data = await res.json();
 
-        todasAtividades = data.atividades || data.data || data || [];
+        todasAtividades = coordFiltrarAtividadesCursoSelecionado(coordNormalizarLista(data, 'atividades'), todosCursos);
 
-        renderizarTabela(todasAtividades);
+        filtrar();
 
     } catch (err) {
         console.error('Erro ao carregar atividades:', err);
@@ -200,12 +211,14 @@ async function carregarDadosFormulario() {
         const dataCursos = await resCursos.json().catch(() => ({}));
         const dataCategorias = await resCategorias.json().catch(() => ({}));
 
-        todosAlunos = dataAlunos.alunos || dataAlunos.data || dataAlunos || [];
-        todosCursos = dataCursos.cursos || dataCursos.data || dataCursos || [];
-        todasCategorias = dataCategorias.categorias || dataCategorias.data || dataCategorias || [];
+        todosCursos = coordNormalizarLista(dataCursos, 'cursos');
+        coordCursoSelecionadoId(todosCursos);
+        todosAlunos = coordFiltrarAlunosCursoSelecionado(coordNormalizarLista(dataAlunos, 'alunos'), todosCursos);
+        todasCategorias = coordNormalizarLista(dataCategorias, 'categorias');
 
         popularSelectAlunos();
         popularSelectCursos();
+        popularFiltroCurso();
         popularSelectCategorias();
 
     } catch (err) {
@@ -231,14 +244,29 @@ function popularSelectCursos() {
     const select = document.getElementById('inputCursoId');
     if (!select) return;
 
-    select.innerHTML = '<option value="">Selecione o curso</option>';
+    const cursoAtual = coordCursoSelecionado(todosCursos);
+    select.innerHTML = '';
 
-    todosCursos.forEach(curso => {
-        const opt = document.createElement('option');
-        opt.value = curso._id || curso.id;
-        opt.textContent = curso.nome || curso.nomeCurso || 'Curso';
-        select.appendChild(opt);
-    });
+    if (!cursoAtual) {
+        select.innerHTML = '<option value="">Nenhum curso vinculado</option>';
+        select.disabled = true;
+        return;
+    }
+
+    const opt = document.createElement('option');
+    opt.value = cursoAtual.id;
+    opt.textContent = cursoAtual.nome;
+    opt.selected = true;
+    select.appendChild(opt);
+    select.disabled = true;
+}
+
+function popularFiltroCurso() {
+    const select = document.getElementById('filtroCurso');
+    if (!select) return;
+
+    coordPopularSelectCursos('filtroCurso', todosCursos, coordCursoSelecionadoId(todosCursos));
+    select.disabled = true;
 }
 
 function popularSelectCategorias() {

@@ -1,39 +1,11 @@
-﻿renderTopbar();
+renderTopbar();
 
 let alunosCoord = [];
 let cursosCoord = [];
 let alunoEditandoId = null;
 
-function obterCursosCoordenadosIds() {
-    const user = JSON.parse(localStorage.getItem('user') || '{}');
-    const cursos = user.cursosCoordenados || [];
-
-    return cursos
-        .map(item => String(item.cursoId?._id || item.cursoId || item._id || item))
-        .filter(Boolean);
-}
-
-function filtrarCursosCoordenados(cursos) {
-    const permitidos = obterCursosCoordenadosIds();
-
-    if (!permitidos.length) return cursos;
-
-    return cursos.filter(curso => permitidos.includes(String(curso._id || curso.id)));
-}
-
 function obterCursoIdAluno(aluno) {
-    const primeiro = aluno?.cursos?.[0];
-
-    if (!primeiro) return '';
-
-    if (typeof primeiro === 'string') return primeiro;
-
-    if (primeiro.cursoId) {
-        if (typeof primeiro.cursoId === 'string') return primeiro.cursoId;
-        return primeiro.cursoId._id || primeiro.cursoId.id || '';
-    }
-
-    return primeiro._id || primeiro.id || '';
+    return coordAlunoCursoIds(aluno)[0] || '';
 }
 
 function obterNomeCursoAluno(aluno) {
@@ -43,30 +15,30 @@ function obterNomeCursoAluno(aluno) {
     return curso?.nome || aluno.curso?.nome || aluno.curso || '–';
 }
 
-function alunoPertenceAoCoordenador(aluno) {
-    const permitidos = obterCursosCoordenadosIds();
-
-    if (!permitidos.length) return true;
-
-    return permitidos.includes(String(obterCursoIdAluno(aluno)));
+function cursoSelecionadoAtual() {
+    return coordCursoSelecionado(cursosCoord);
 }
 
-function popularCursosAluno(cursoSelecionado = '') {
+function popularCursosAluno(cursoSelecionado = coordCursoSelecionadoId(cursosCoord)) {
     const select = document.getElementById('inputAlunoCurso');
-    select.innerHTML = '<option value="">Selecione um curso</option>';
+    const cursoAtual = cursoSelecionadoAtual();
 
-    cursosCoord.forEach(curso => {
-        const id = curso._id || curso.id;
-        const option = document.createElement('option');
-        option.value = id;
-        option.textContent = curso.nome || curso.codigo || 'Curso sem nome';
+    if (!select) return;
 
-        if (String(id) === String(cursoSelecionado)) {
-            option.selected = true;
-        }
+    select.innerHTML = '';
 
-        select.appendChild(option);
-    });
+    if (!cursoAtual) {
+        select.innerHTML = '<option value="">Nenhum curso vinculado</option>';
+        select.disabled = true;
+        return;
+    }
+
+    const option = document.createElement('option');
+    option.value = cursoAtual.id;
+    option.textContent = cursoAtual.nome;
+    option.selected = String(cursoAtual.id) === String(cursoSelecionado);
+    select.appendChild(option);
+    select.disabled = true;
 }
 
 async function carregarCursosCoord() {
@@ -75,7 +47,8 @@ async function carregarCursosCoord() {
 
     if (!res.ok) throw new Error(data.message || 'Erro ao carregar cursos.');
 
-    cursosCoord = filtrarCursosCoordenados(data.cursos || data.data || data || []);
+    cursosCoord = coordNormalizarLista(data, 'cursos');
+    coordCursoSelecionadoId(cursosCoord);
     popularCursosAluno();
 }
 
@@ -85,7 +58,7 @@ async function carregarAlunosCoord() {
 
     if (!res.ok) throw new Error(data.message || 'Erro ao carregar alunos.');
 
-    alunosCoord = (data.alunos || data.data || data || []).filter(alunoPertenceAoCoordenador);
+    alunosCoord = coordFiltrarAlunosCursoSelecionado(coordNormalizarLista(data, 'alunos'), cursosCoord);
     renderizarAlunosCoord(alunosCoord);
 }
 
@@ -93,7 +66,7 @@ function renderizarAlunosCoord(lista) {
     const tbody = document.getElementById('tabelaAlunosBody');
 
     if (!lista.length) {
-        tbody.innerHTML = '<tr><td colspan="5" class="empty-table">Nenhum aluno encontrado.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="5" class="empty-table">Nenhum aluno encontrado para o curso selecionado.</td></tr>';
         return;
     }
 
@@ -173,10 +146,10 @@ async function salvarAlunoCoord() {
     const matricula = document.getElementById('inputAlunoMatricula').value.trim().toUpperCase();
     const email = document.getElementById('inputAlunoEmail').value.trim().toLowerCase();
     const dataPrevistaColacao = document.getElementById('inputAlunoDataColacao').value;
-    const cursoId = document.getElementById('inputAlunoCurso').value;
+    const cursoId = coordCursoSelecionadoId(cursosCoord);
 
     if (!nome || !matricula || !email || !dataPrevistaColacao || !cursoId) {
-        alert('Preencha todos os campos.');
+        alert('Preencha todos os campos e verifique o curso selecionado.');
         return;
     }
 
