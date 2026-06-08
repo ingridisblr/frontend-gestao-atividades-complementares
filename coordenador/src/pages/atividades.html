@@ -21,11 +21,35 @@
             </div>
         </div>
 
-                <nav class="sidebar-nav">
-            <a class="nav-item" href="dashboard.html">Dashboard</a>
-            <a class="nav-item" href="alunos.html">Alunos</a>
-            <a class="nav-item active" href="atividades.html">Atividades</a>
-            <a class="nav-item" href="relatorio.html">Relatórios</a>
+        <nav class="sidebar-nav">
+            <a class="nav-item" href="dashboard.html">
+                <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                    <rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/>
+                    <rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>
+                </svg>
+                Dashboard
+            </a>
+            <a class="nav-item" href="alunos.html">
+                <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                    <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/>
+                    <path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/>
+                </svg>
+                Alunos
+            </a>
+            <a class="nav-item active" href="atividades.html">
+                <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                    <path d="M9 12h6M9 16h6M7 4H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V6a2 2 0 00-2-2h-2"/>
+                    <path d="M9 4h6v4H9V4z"/>
+                </svg>
+                Atividades
+            </a>
+            <a class="nav-item" href="relatorio.html">
+                <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                    <path d="M14 2v6h6M8 13h8M8 17h5"/>
+                </svg>
+                Relatórios
+            </a>
         </nav>
 
         <div class="sidebar-footer">
@@ -55,7 +79,7 @@
 
         <main class="content">
             <h1 class="page-title">Atividades</h1>
-            <p class="page-subtitle">Gerencie e valide as atividades complementares</p>
+            <p class="page-subtitle">Gerencie e valide as atividades do curso selecionado</p>
 
             <div class="card filtros-card">
                 <div class="filtros-grid">
@@ -86,6 +110,7 @@
                             <th>Categoria</th>
                             <th>Carga HorÃ¡ria</th>
                             <th>Status</th>
+                            <th>Data</th>
                             <th>AÃ§Ãµes</th>
                         </tr>
                     </thead>
@@ -104,6 +129,7 @@
     <script src="../../../shared/js/api.js"></script>
     <script src="../../../shared/js/auth.js"></script>
     <script src="../../../shared/js/components.js"></script>
+    <script src="../js/curso-contexto.js"></script>
     <script src="../js/atividades.js"></script>
     
 

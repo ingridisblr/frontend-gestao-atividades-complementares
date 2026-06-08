@@ -1,0 +1,133 @@
+.coord-course-card {
+    padding: 18px 20px;
+    margin-bottom: 20px;
+}
+
+.coord-course-row {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 18px;
+}
+
+.coord-course-kicker {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--brand);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 4px;
+}
+
+.coord-course-name {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.coord-course-help {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-top: 3px;
+}
+
+.coord-course-select-wrap {
+    min-width: 280px;
+}
+
+.coord-course-select-wrap .form-label {
+    margin-bottom: 6px;
+}
+
+.recentes-list { list-style: none; }
+
+.recentes-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 18px 24px;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s;
+}
+
+.recentes-item:last-child { border-bottom: none; }
+.recentes-item:hover { background: #fafbfc; }
+
+.recentes-info {
+    min-width: 0;
+}
+
+.recentes-nome {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 3px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.recentes-detalhe {
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+.charts-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 16px;
+    margin: 16px 0;
+}
+
+.chart-card { overflow: visible; }
+
+.chart-body {
+    height: 280px;
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.chart-body--pizza {
+    flex-direction: column;
+    gap: 16px;
+}
+
+.pizza-legends {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.pizza-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.pizza-legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+@media (max-width: 900px) {
+    .coord-course-row {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .coord-course-select-wrap {
+        min-width: 0;
+    }
+
+    .charts-grid {
+        grid-template-columns: 1fr;
+    }
+}

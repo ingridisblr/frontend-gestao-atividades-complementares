@@ -1,15 +1,15 @@
-﻿renderTopbar();
+renderTopbar();
 
 let chartBarras = null;
 let chartPizza = null;
+let cursosBase = [];
 
-function normalizarLista(data) {
-    if (Array.isArray(data)) return data;
-    return data?.atividades || data?.alunos || data?.data || [];
+function textoSeguro(valor, fallback = '–') {
+    return valor === undefined || valor === null || valor === '' ? fallback : String(valor);
 }
 
 function normalizarStatus(status) {
-    const s = String(status || '').trim().toLowerCase();
+    const s = textoSeguro(status, 'pendente').trim().toLowerCase();
 
     if (['aprovada', 'aprovado', 'aprovação', 'aprovacao'].includes(s)) return 'aprovada';
     if (['reprovada', 'reprovado', 'reprovação', 'reprovacao'].includes(s)) return 'reprovada';
@@ -18,16 +18,22 @@ function normalizarStatus(status) {
     return 'pendente';
 }
 
+function labelStatus(status) {
+    const map = {
+        pendente: 'Pendente',
+        aprovada: 'Aprovada',
+        reprovada: 'Reprovada'
+    };
+
+    return map[normalizarStatus(status)] || textoSeguro(status);
+}
+
 function obterAluno(a) {
-    return a.alunoId?.nome || a.aluno?.nome || a.nomeAluno || a.nome || 'Aluno não informado';
+    return textoSeguro(a.alunoId?.nome || a.aluno?.nome || a.nomeAluno || a.nome, 'Aluno não informado');
 }
 
 function obterCurso(a) {
-    return a.cursoId?.nome || a.curso?.nome || a.curso || 'Curso não informado';
-}
-
-function obterCursoId(a) {
-    return String(a.cursoId?._id || a.cursoId || a.curso?._id || '');
+    return textoSeguro(a.cursoId?.nome || a.curso?.nome || a.curso || coordCursoSelecionado(cursosBase)?.nome, 'Curso não informado');
 }
 
 function obterHorasValidadas(a) {
@@ -49,47 +55,20 @@ function formatarData(data) {
     return d.toLocaleDateString('pt-BR');
 }
 
-function obterCursosCoordenados() {
-    const user = JSON.parse(localStorage.getItem('user') || localStorage.getItem('usuario') || '{}');
-    const cursos = user.cursosCoordenados || [];
+function atualizarCursoAtual() {
+    const curso = coordCursoSelecionado(cursosBase);
+    const nome = document.getElementById('cursoAtualNome');
 
-    return cursos
-        .map(item => String(item.cursoId?._id || item.cursoId || item._id || item))
-        .filter(Boolean);
+    if (nome) {
+        nome.textContent = curso?.nome || 'Nenhum curso vinculado';
+    }
+
+    coordPopularSelectCursos('selectCursoDashboard', cursosBase, curso?.id || '');
 }
 
-function filtrarPorCursosDoCoordenador(atividades) {
-    const cursosPermitidos = obterCursosCoordenados();
-
-    if (!cursosPermitidos.length) return atividades;
-
-    return atividades.filter(atividade => cursosPermitidos.includes(obterCursoId(atividade)));
-}
-
-function obterIdsCursosAluno(aluno) {
-    const cursos = aluno.cursos || aluno.cursosMatriculados || [];
-    const ids = cursos.map(item => String(item.cursoId?._id || item.cursoId || item._id || item)).filter(Boolean);
-
-    const cursoUnico = String(aluno.cursoId?._id || aluno.cursoId || aluno.curso?._id || '');
-    if (cursoUnico) ids.push(cursoUnico);
-
-    return ids;
-}
-
-function filtrarAlunosPorCursosDoCoordenador(alunos) {
-    const cursosPermitidos = obterCursosCoordenados();
-
-    if (!cursosPermitidos.length) return alunos;
-
-    return alunos.filter(aluno => obterIdsCursosAluno(aluno).some(id => cursosPermitidos.includes(id)));
-}
-
-function agruparAtividadesPorCurso(atividades) {
-    return atividades.reduce((acc, atividade) => {
-        const curso = obterCurso(atividade);
-        acc[curso] = (acc[curso] || 0) + 1;
-        return acc;
-    }, {});
+function agruparAtividadesDoCurso(atividades) {
+    const curso = coordCursoSelecionado(cursosBase)?.nome || 'Curso selecionado';
+    return { [curso]: atividades.length };
 }
 
 function renderizarBarras(dados) {
@@ -121,11 +100,30 @@ function renderizarBarras(dados) {
     });
 }
 
+function renderizarLegendas(statusResumo) {
+    const legendas = document.getElementById('pizzaLegends');
+    if (!legendas) return;
+
+    const itens = [
+        ['Pendentes', statusResumo.pendentes, '#f59e0b'],
+        ['Aprovadas', statusResumo.aprovadas, '#10b981'],
+        ['Reprovadas', statusResumo.reprovadas, '#ef4444']
+    ];
+
+    legendas.innerHTML = itens.map(([label, valor, cor]) => `
+        <div class="pizza-legend-item">
+            <span class="pizza-legend-dot" style="background:${cor}"></span>
+            ${label}: ${valor}
+        </div>
+    `).join('');
+}
+
 function renderizarPizza(statusResumo) {
     const canvas = document.getElementById('chartPizza');
     if (!canvas || typeof Chart === 'undefined') return;
 
     if (chartPizza) chartPizza.destroy();
+    renderizarLegendas(statusResumo);
 
     chartPizza = new Chart(canvas, {
         type: 'doughnut',
@@ -140,7 +138,8 @@ function renderizarPizza(statusResumo) {
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            cutout: '65%'
+            cutout: '65%',
+            plugins: { legend: { display: false } }
         }
     });
 }
@@ -154,25 +153,43 @@ function renderizarRecentes(atividades) {
         .slice(0, 6);
 
     if (!recentes.length) {
-        lista.innerHTML = '<li class="activity-item">Nenhuma atividade encontrada.</li>';
+        lista.innerHTML = '<li class="recentes-item">Nenhuma atividade encontrada para este curso.</li>';
         return;
     }
 
     lista.innerHTML = recentes.map(a => `
-        <li class="activity-item">
-            <div class="activity-info">
-                <div class="activity-name">${obterAluno(a)}</div>
-                <div class="activity-detail">${obterCurso(a)} • ${obterHorasInformadas(a)}h • ${normalizarStatus(a.status)}</div>
+        <li class="recentes-item">
+            <div class="recentes-info">
+                <div class="recentes-nome">${obterAluno(a)}</div>
+                <div class="recentes-detalhe">${obterCurso(a)} • ${obterHorasInformadas(a)}h • ${labelStatus(a.status)}</div>
             </div>
             <div class="activity-date">${formatarData(obterData(a))}</div>
         </li>
     `).join('');
 }
 
+async function carregarCursosBase() {
+    try {
+        await coordSincronizarUsuarioDaApi();
+
+        const res = await apiFetch('/api/cursos');
+        const data = await res.json().catch(() => ({}));
+
+        if (res.ok) {
+            cursosBase = coordNormalizarLista(data, 'cursos');
+        }
+    } catch (error) {
+        console.warn('Não foi possível hidratar nomes dos cursos:', error);
+    }
+}
+
 async function carregarDashboard() {
     try {
+        await carregarCursosBase();
+        atualizarCursoAtual();
+
         const [resAtividades, resAlunos] = await Promise.all([
-            apiFetch('/api/atividades'),
+            apiFetch(`/api/atividades${coordCursoSelecionadoId(cursosBase) ? `?cursoId=${coordCursoSelecionadoId(cursosBase)}` : ''}`),
             apiFetch('/api/alunos')
         ]);
 
@@ -182,8 +199,8 @@ async function carregarDashboard() {
         const dataAtividades = await resAtividades.json();
         const dataAlunos = await resAlunos.json();
 
-        const atividades = filtrarPorCursosDoCoordenador(normalizarLista(dataAtividades));
-        const alunos = filtrarAlunosPorCursosDoCoordenador(normalizarLista(dataAlunos));
+        const atividades = coordFiltrarAtividadesCursoSelecionado(coordNormalizarLista(dataAtividades, 'atividades'), cursosBase);
+        const alunos = coordFiltrarAlunosCursoSelecionado(coordNormalizarLista(dataAlunos, 'alunos'), cursosBase);
 
         const pendentes = atividades.filter(a => normalizarStatus(a.status) === 'pendente').length;
         const aprovadas = atividades.filter(a => normalizarStatus(a.status) === 'aprovada').length;
@@ -196,16 +213,21 @@ async function carregarDashboard() {
         document.getElementById('statPendentes').textContent = pendentes;
         document.getElementById('statAprovadas').textContent = aprovadas;
         document.getElementById('statReprovadas').textContent = reprovadas;
-        document.getElementById('statHoras').textContent = `${horasValidadas}h`;
+        document.getElementById('statHoras').innerHTML = `${horasValidadas}<span class="stat-unit">h</span>`;
         document.getElementById('statAlunos').textContent = alunos.length;
 
-        renderizarBarras(agruparAtividadesPorCurso(atividades));
+        renderizarBarras(agruparAtividadesDoCurso(atividades));
         renderizarPizza({ pendentes, aprovadas, reprovadas });
         renderizarRecentes(atividades);
     } catch (error) {
         console.error('Erro ao carregar dashboard do coordenador:', error);
-        document.getElementById('recentesList').innerHTML = '<li class="activity-item">Erro ao carregar dados do dashboard.</li>';
+        document.getElementById('recentesList').innerHTML = '<li class="recentes-item">Erro ao carregar dados do dashboard.</li>';
     }
 }
+
+document.getElementById('selectCursoDashboard')?.addEventListener('change', event => {
+    coordSetCursoSelecionado(event.target.value);
+    carregarDashboard();
+});
 
 carregarDashboard();

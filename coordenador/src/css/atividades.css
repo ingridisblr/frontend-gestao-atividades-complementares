@@ -1,0 +1,77 @@
+.filtros-card {
+    padding: 20px 24px;
+    margin-bottom: 16px;
+}
+
+.filtros-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 16px;
+}
+
+.filtro-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.filtro-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.filtro-select {
+    width: 100%;
+    min-height: 44px;
+    padding: 11px 13px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface);
+    color: var(--text-primary);
+    font-size: 14px;
+    font-family: 'DM Sans', sans-serif;
+    outline: none;
+}
+
+.filtro-select:focus {
+    border-color: var(--brand);
+    box-shadow: 0 0 0 3px rgba(0,183,184,0.08);
+}
+
+.btn-detalhes {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 38px;
+    padding: 7px 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.btn-detalhes:hover {
+    background: var(--bg);
+    color: var(--text-primary);
+}
+
+.td-carga,
+.td-data {
+    font-family: 'DM Mono', monospace;
+    color: var(--text-secondary);
+    white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+    .filtros-grid {
+        grid-template-columns: 1fr;
+    }
+}

@@ -1,17 +1,17 @@
-/* ═══════════════════════════════════════════════════════════════
-   KORE — sw.js  (Service Worker)
-   Cache-first para assets estáticos, network-first para API
-   ═══════════════════════════════════════════════════════════════ */
+﻿/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   KORE â€” sw.js  (Service Worker)
+   Cache-first para assets estÃ¡ticos, network-first para API
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
-const CACHE_NAME    = 'kore-v1';
-const API_ORIGIN    = 'https://sistema-gestao-atividades-complementares.onrender.com';
+const CACHE_NAME    = 'kore-v3';
+const API_ORIGINS   = ['https://sistema-gestao-atividades-complementares.onrender.com', 'http://localhost:3000'];
 
 const STATIC_ASSETS = [
-    /* ── raiz ── */
+    /* â”€â”€ raiz â”€â”€ */
     '/',
     '/index.html',
 
-    /* ── admin pages ── */
+    /* â”€â”€ admin pages â”€â”€ */
     '/admin/src/pages/dashboard.html',
     '/admin/src/pages/atividades.html',
     '/admin/src/pages/alunos.html',
@@ -21,19 +21,19 @@ const STATIC_ASSETS = [
     '/admin/src/pages/auditoria.html',
     '/admin/src/pages/regras.html',
 
-    /* ── CSS ── */
+    /* â”€â”€ CSS â”€â”€ */
     '/shared/css/global.css',
     '/admin/src/css/dashboard.css',
     '/admin/src/css/atividades.css',
     '/admin/src/css/alunos.css',
     '/admin/src/css/cursos.css',
 
-    /* ── JS compartilhado ── */
+    /* â”€â”€ JS compartilhado â”€â”€ */
     '/shared/js/api.js',
     '/shared/js/auth.js',
     '/shared/js/components.js',
 
-    /* ── JS admin ── */
+    /* â”€â”€ JS admin â”€â”€ */
     '/admin/src/js/dashboard.js',
     '/admin/src/js/atividades.js',
     '/admin/src/js/alunos.js',
@@ -56,7 +56,7 @@ self.addEventListener('install', event => {
             return Promise.allSettled(
                 STATIC_ASSETS.map(url =>
                     cache.add(url).catch(() => {
-                        console.warn('[SW] Não foi possível cachear:', url);
+                        console.warn('[SW] NÃ£o foi possÃ­vel cachear:', url);
                     })
                 )
             );
@@ -90,7 +90,7 @@ self.addEventListener('fetch', event => {
     if (url.protocol === 'chrome-extension:') return;
 
 
-    if (url.origin === API_ORIGIN) {
+    if (API_ORIGINS.includes(url.origin)) {
         event.respondWith(networkFirst(request));
         return;
     }
@@ -118,7 +118,7 @@ async function cacheFirst(request) {
         }
         return response;
     } catch {
-        return new Response('Offline — recurso não disponível no cache.', {
+        return new Response('Offline â€” recurso nÃ£o disponÃ­vel no cache.', {
             status: 503,
             headers: { 'Content-Type': 'text/plain; charset=utf-8' }
         });
@@ -137,9 +137,10 @@ async function networkFirst(request) {
     } catch {
         const cached = await caches.match(request);
         if (cached) return cached;
-        return new Response(JSON.stringify({ message: 'Sem conexão com o servidor.' }), {
+        return new Response(JSON.stringify({ message: 'Sem conexÃ£o com o servidor.' }), {
             status: 503,
             headers: { 'Content-Type': 'application/json' }
         });
     }
 }
+
