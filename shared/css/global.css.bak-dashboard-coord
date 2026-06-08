@@ -758,38 +758,3 @@ input[type="file"].form-input { padding: 9px 12px; cursor: pointer; }
         gap: 10px;
     }
 }
-
-/* Dashboard coordenador */
-.charts-grid {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    gap: 16px;
-    margin: 24px 0;
-}
-
-.chart-card {
-    min-height: 360px;
-}
-
-.chart-body {
-    height: 280px;
-    padding: 20px;
-}
-
-.chart-body-pizza {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.activity-date {
-    color: var(--text-secondary);
-    font-size: 14px;
-    white-space: nowrap;
-}
-
-@media (max-width: 900px) {
-    .charts-grid {
-        grid-template-columns: 1fr;
-    }
-}
