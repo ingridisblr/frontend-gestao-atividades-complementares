@@ -1,6 +1,7 @@
 renderTopbar();
 
 let todasAtividadesValidadas = [];
+// URL Base do seu backend no Render
 const API_UPLOAD_BASE = 'https://sistema-gestao-atividades-complementares.onrender.com';
 
 function normalizarStatus(status) {
@@ -65,12 +66,10 @@ function obterJustificativa(a) {
 }
 
 function obterValidador(a) {
-    // Busca o nome do validador (pode ser expandido conforme o retorno do seu back-end)
     return a.validadoPor?.nome || a.coordenador?.nome || 'Coordenador';
 }
 
 function obterDataValidacao(a) {
-    // Retorna a data de atualização do status
     return a.updatedAt || a.dataValidacao || a.data;
 }
 
@@ -95,7 +94,6 @@ function renderizarCardsHistorico(atividades) {
         const gridColunas = isAprovada 
             ? 'grid-template-columns: repeat(4, 1fr);' 
             : 'grid-template-columns: repeat(3, 1fr);';
-
 
         let blocoDetalhesInternos = `<div><strong>Descrição:</strong> ${obterDescricao(a)}</div>`;
         
@@ -157,14 +155,32 @@ function renderizarCardsHistorico(atividades) {
 
 async function carregarHistoricoAtividades() {
     try {
-        const res = await apiFetch('/api/atividades');
+        // 1. Busca o token salvo no navegador para autenticar com o back-end
+        const token = localStorage.getItem('token'); 
+        
+        // 2. Configura os cabeçalhos de requisição
+        const headers = {
+            'Content-Type': 'application/json'
+        };
+        
+        if (token) {
+            headers['Authorization'] = `Bearer ${token}`;
+        }
+
+        // 3. Faz a chamada nativa usando a URL completa do Render
+        const res = await fetch(`${API_UPLOAD_BASE}/api/atividades`, {
+            method: 'GET',
+            headers: headers
+        });
 
         if (!res.ok) throw new Error('Erro ao buscar atividades do histórico');
 
         const data = await res.json();
+        
+        // Trata os formatos comuns que o back-end pode retornar (um objeto com chaves ou direto a array)
         const listaBruta = data.atividades || data.data || data || [];
 
-        // Filtro Crítico: No histórico, só entram atividades concluídas (Aprovadas ou Reprovadas)
+        // 4. Filtra trazendo apenas o histórico de fato (Aprovadas e Reprovadas)
         todasAtividadesValidadas = listaBruta.filter(a => {
             const status = normalizarStatus(a.status);
             return status === 'aprovada' || status === 'reprovada';
@@ -185,7 +201,6 @@ async function carregarHistoricoAtividades() {
         }
     }
 }
-
 
 document.addEventListener('DOMContentLoaded', async () => {
     await carregarHistoricoAtividades();

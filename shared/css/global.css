@@ -1,6 +1,4 @@
-
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
 
 :root {
     --brand:          #00B7B8;
@@ -163,7 +161,7 @@ body {
     padding: 8px 14px;
     border-radius: 8px;
     transition: background 0.15s, color 0.15s;
-    min-height: 44px; /* PWA: touch target */
+    min-height: 44px; 
 }
 
 .btn-logout:hover { background: var(--bg); color: var(--text-primary); }
@@ -392,7 +390,7 @@ body {
 .form-input.input-erro   { border-color: #dc2626; }
 .form-input.input-erro:focus { border-color: #dc2626; box-shadow: none; }
 
-textarea.form-input         { resize: vertical; min-height: 90px; }
+textarea.form-input          { resize: vertical; min-height: 90px; }
 input[type="file"].form-input { padding: 9px 12px; cursor: pointer; }
 
 .form-help { font-size: 12px; color: var(--text-muted); }
@@ -406,6 +404,7 @@ input[type="file"].form-input { padding: 9px 12px; cursor: pointer; }
     z-index: 200;
 }
 
+.modal-overlay.show,
 .modal-overlay.open { display: block; }
 
 .modal {
@@ -717,4 +716,188 @@ input[type="file"].form-input { padding: 9px 12px; cursor: pointer; }
 
 @media (max-width: 480px) {
     .stats-grid { grid-template-columns: 1fr; }
+}
+/* ==========================================================================
+   CORREÇÃO DO BOTÃO "VER DETALHES" DA TABELA (ESPELHO DO SEU MECANISMO)
+   ========================================================================== */
+.btn-detalhes {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    background: transparent;
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+    min-height: 44px; 
+}
+
+.btn-detalhes svg { width: 15px; height: 15px; flex-shrink: 0; }
+
+.btn-detalhes:hover {
+    background: var(--bg);
+    color: var(--text-primary);
+    border-color: var(--text-muted);
+}
+
+/* ==========================================================================
+   AJUSTE DE SOBREPOSIÇÃO PARA O MODAL ESPECÍFICO DE COORDENAÇÃO (ID)
+   ========================================================================== */
+#modalAtividade.modal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--surface);
+    border-radius: 14px;
+    width: 90% !important;
+    max-width: 720px !important; /* Alarga para os dados respirarem lado a lado */
+    max-height: 85vh !important;
+    overflow: hidden;
+    z-index: 201;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.18);
+    flex-direction: column;
+}
+
+/* Força o display flex quando o script injeta a classe .show */
+#modalAtividade.modal.show {
+    display: flex !important;
+}
+
+.modal-info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    background: #f8fafc;
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    margin-bottom: 20px;
+}
+
+.info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.info-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.info-item strong {
+    font-size: 0.95rem;
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.modal-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.modal-desc-box {
+    background: #f8fafc;
+    border-radius: 8px;
+    padding: 14px 18px;
+    border: 1px solid var(--border);
+}
+
+.modal-desc-box p {
+    margin: 0;
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+.modal-hours-value {
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.modal-attachments-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* Customização fina dos previews injetados pelo seu renderizarArquivo() */
+.pdf-preview {
+    width: 100%;
+    height: 200px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+}
+
+.image-preview {
+    max-width: 100%;
+    max-height: 200px;
+    object-fit: contain;
+    border-radius: 8px;
+}
+
+.modal-attachments-list .btn-detalhes {
+    margin-top: 8px;
+    align-self: flex-start;
+}
+
+/* Alinhamento dos botões do footer em formato de bloco flexível */
+#modalAtividade .modal-footer {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 20px 24px;
+    border-top: 1px solid var(--border);
+    background: var(--surface);
+    width: 100% !important;
+}
+
+.btn-modal-action {
+    flex: 1 !important; /* Faz os dois botões dividirem o espaço igualmente */
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600;
+    color: #ffffff;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    transition: filter 0.15s, transform 0.1s;
+    min-height: 44px;
+}
+
+.btn-modal-action:active {
+    transform: scale(0.98);
+}
+
+.btn-modal-action.approve {
+    background: var(--approved-color) !important;
+}
+.btn-modal-action.approve:hover {
+    filter: brightness(0.9);
+}
+
+.btn-modal-action.reject {
+    background: var(--rejected-color) !important;
+}
+.btn-modal-action.reject:hover {
+    filter: brightness(0.9);
 }

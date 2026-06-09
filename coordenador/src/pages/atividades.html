@@ -121,10 +121,88 @@
         </main>
     </div>
 
+<div id="modalOverlay" class="modal-overlay" onclick="fecharModal()"></div>
+
+<div id="modalAtividade" class="modal" aria-hidden="true">
+    <input type="hidden" id="atividadeId">
+
+    <header class="modal-header">
+        <h3 id="detalheTitulo">Detalhes da Atividade</h3>
+        <button class="modal-fechar" onclick="fecharModal()">&times;</button>
+    </header>
+
+    <div class="modal-body">
+        <div class="modal-info-grid">
+            <div class="info-item">
+                <span class="info-label">Aluno</span>
+                <strong id="detalheAluno">–</strong>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Curso</span>
+                <strong id="detalheCurso">–</strong>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Categoria</span>
+                <strong id="detalheCategoria">–</strong>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Data de Submissão</span>
+                <strong id="detalheData">–</strong>
+            </div>
+        </div>
+
+        <div class="modal-section">
+            <span class="info-label">Descrição</span>
+            <div class="modal-desc-box">
+                <p id="detalheDescricao">–</p>
+            </div>
+        </div>
+
+        <div class="modal-section">
+            <span class="info-label">Carga Horária Solicitada</span>
+            <div id="detalheHoras" class="modal-hours-value">–</div>
+            <span id="detalheStatus" style="display: none;">–</span> 
+        </div>
+
+        <input type="hidden" id="cargaHorariaValidada">
+        <input type="hidden" id="observacaoCoordenador">
+
+        <div class="modal-section">
+            <label for="justificativaReprovacao" class="info-label">Justificativa / Observação do Coordenador</label>
+            <textarea 
+                id="justificativaReprovacao" 
+                class="modal-textarea" 
+                placeholder="Digite aqui o motivo da reprovação ou observações sobre a validação..."
+                rows="3"></textarea>
+        </div>
+
+        <div class="modal-section">
+            <span class="info-label">Anexos</span>
+            <div id="previewArquivo" class="modal-attachments-list"></div>
+        </div>
+    </div>
+
+    <footer class="modal-footer">
+        <button class="btn-modal-action approve" onclick="atualizarStatus('Aprovada')">
+            <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" width="16" height="16">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/>
+            </svg>
+            Aprovar
+        </button>
+        <button class="btn-modal-action reject" onclick="atualizarStatus('Reprovada')">
+            <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" width="16" height="16">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+            Reprovar
+        </button>
+    </footer>
+</div>
+
     <script src="../../../shared/js/api.js"></script>
     <script src="../../../shared/js/auth.js"></script>
     <script src="../../../shared/js/components.js"></script>
     <script src="../js/atividades.js"></script>
+    <script src="../js/modal-relatorio.js"></script>
 
 </body>
 </html>
