@@ -1,10 +1,10 @@
-renderTopbar();
+﻿renderTopbar();
 
 let chartBarras = null;
 let chartPizza = null;
 let cursosBase = [];
 
-function textoSeguro(valor, fallback = '–') {
+function textoSeguro(valor, fallback = '-') {
     return valor === undefined || valor === null || valor === '' ? fallback : String(valor);
 }
 
@@ -49,9 +49,9 @@ function obterData(a) {
 }
 
 function formatarData(data) {
-    if (!data) return '–';
+    if (!data) return '-';
     const d = new Date(data);
-    if (Number.isNaN(d.getTime())) return '–';
+    if (Number.isNaN(d.getTime())) return '-';
     return d.toLocaleDateString('pt-BR');
 }
 
@@ -231,3 +231,4 @@ document.getElementById('selectCursoDashboard')?.addEventListener('change', even
 });
 
 carregarDashboard();
+

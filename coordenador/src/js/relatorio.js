@@ -1,4 +1,4 @@
-renderTopbar();
+﻿renderTopbar();
 
 let atividadesRelatorio = [];
 let cursosRelatorio = [];
@@ -24,15 +24,15 @@ function labelStatus(status) {
 }
 
 function obterAluno(a) {
-    return a.alunoId?.nome || a.aluno?.nome || a.nomeAluno || a.nome || '–';
+    return a.alunoId?.nome || a.aluno?.nome || a.nomeAluno || a.nome || '-';
 }
 
 function obterCurso(a) {
-    return a.cursoId?.nome || a.curso?.nome || a.curso || coordCursoSelecionado(cursosRelatorio)?.nome || '–';
+    return a.cursoId?.nome || a.curso?.nome || a.curso || coordCursoSelecionado(cursosRelatorio)?.nome || '-';
 }
 
 function obterCategoria(a) {
-    return a.categoriaId?.nome || a.categoria?.nome || a.categoria || '–';
+    return a.categoriaId?.nome || a.categoria?.nome || a.categoria || '-';
 }
 
 function obterHoras(a) {
@@ -48,9 +48,9 @@ function obterTitulo(a) {
 }
 
 function formatarData(data) {
-    if (!data) return '–';
+    if (!data) return '-';
     const d = new Date(data);
-    if (Number.isNaN(d.getTime())) return '–';
+    if (Number.isNaN(d.getTime())) return '-';
     return d.toLocaleDateString('pt-BR');
 }
 
@@ -145,3 +145,4 @@ document.getElementById('buscaRelatorio')?.addEventListener('input', aplicarFilt
 document.getElementById('btnExportarPdf')?.addEventListener('click', () => window.print());
 
 carregarRelatorio();
+

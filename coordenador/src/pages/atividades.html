@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-pt">
 <head>
     <meta charset="UTF-8">
@@ -17,7 +17,7 @@
             <img src="../../../assets/imagens/k-logo1.png" alt="KORE" class="sidebar-k-logo">
             <div>
                 <div class="brand-name">KORE</div>
-                <div class="brand-sub">CoordenaÃ§Ã£o</div>
+                <div class="brand-sub">Coordenação</div>
             </div>
         </div>
 
@@ -108,15 +108,15 @@
                             <th>Aluno</th>
                             <th>Curso</th>
                             <th>Categoria</th>
-                            <th>Carga HorÃ¡ria</th>
+                            <th>Carga Horária</th>
                             <th>Status</th>
                             <th>Data</th>
-                            <th>AÃ§Ãµes</th>
+                            <th>Ações</th>
                         </tr>
                     </thead>
                     <tbody id="tabelaBody">
                         <tr>
-                            <td colspan="6" class="loading-cell">
+                            <td colspan="7" class="loading-cell">
                                 <div class="skeleton skeleton-text" style="width:40%;margin:0 auto"></div>
                             </td>
                         </tr>
@@ -126,11 +126,74 @@
         </main>
     </div>
 
+    <div id="modalOverlay" class="modal-overlay" onclick="fecharModal()"></div>
+
+    <section id="modalAtividade" class="modal modal-atividade" aria-hidden="true">
+        <div class="modal-header">
+            <h3>Análise da Atividade</h3>
+            <button class="modal-close" onclick="fecharModal()" aria-label="Fechar">
+                <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" width="20" height="20">
+                    <path d="M18 6L6 18M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+
+        <div class="modal-body">
+            <input type="hidden" id="atividadeId">
+
+            <div class="detalhes-grid">
+                <div class="detalhe-item"><span>Aluno</span><strong id="detalheAluno">-</strong></div>
+                <div class="detalhe-item"><span>Curso</span><strong id="detalheCurso">-</strong></div>
+                <div class="detalhe-item"><span>Categoria</span><strong id="detalheCategoria">-</strong></div>
+                <div class="detalhe-item"><span>Área</span><strong id="detalheAreaCategoria">-</strong></div>
+                <div class="detalhe-item"><span>Horas informadas</span><strong id="detalheHoras">-</strong></div>
+                <div class="detalhe-item"><span>Status atual</span><strong id="detalheStatus">-</strong></div>
+                <div class="detalhe-item"><span>Data de envio</span><strong id="detalheData">-</strong></div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Título da atividade</label>
+                <div class="texto-detalhe" id="detalheTitulo">-</div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Descrição</label>
+                <div class="texto-detalhe" id="detalheDescricao">-</div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Certificado / Comprovante</label>
+                <div id="previewArquivo" class="arquivo-preview">Nenhum arquivo encontrado.</div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="cargaHorariaValidada">Carga horária validada</label>
+                <input type="number" id="cargaHorariaValidada" class="form-input" min="0" placeholder="Ex.: 20">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="observacaoCoordenador">Minha análise</label>
+                <textarea id="observacaoCoordenador" class="form-input" rows="4" placeholder="Escreva sua análise sobre o certificado enviado..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="justificativaReprovacao">Justificativa em caso de reprovação</label>
+                <textarea id="justificativaReprovacao" class="form-input" rows="3" placeholder="Obrigatório apenas se a atividade for reprovada..."></textarea>
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <button class="btn-cancelar" onclick="fecharModal()">Cancelar</button>
+            <button class="btn-reprovar" onclick="atualizarStatus('Reprovada')">Reprovar</button>
+            <button class="btn-salvar" onclick="atualizarStatus('Aprovada')">Aprovar</button>
+        </div>
+    </section>
+
     <script src="../../../shared/js/api.js"></script>
     <script src="../../../shared/js/auth.js"></script>
     <script src="../../../shared/js/components.js"></script>
     <script src="../js/curso-contexto.js"></script>
-    <script src="../js/atividades.js"></script>
+    <script src="../js/atividades.js?v=certificados-20260609"></script>
     
 
 </body>

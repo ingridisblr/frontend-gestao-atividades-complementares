@@ -1,9 +1,9 @@
-﻿/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   KORE â€” sw.js  (Service Worker)
-   Cache-first para assets estÃ¡ticos, network-first para API
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   KORE - sw.js  (Service Worker)
+   Cache-first para assets estáticos, network-first para API
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
-const CACHE_NAME    = 'kore-v3';
+const CACHE_NAME    = 'kore-v4-certificados';
 const API_ORIGINS   = ['https://sistema-gestao-atividades-complementares.onrender.com', 'http://localhost:3000'];
 
 const STATIC_ASSETS = [
@@ -56,7 +56,7 @@ self.addEventListener('install', event => {
             return Promise.allSettled(
                 STATIC_ASSETS.map(url =>
                     cache.add(url).catch(() => {
-                        console.warn('[SW] NÃ£o foi possÃ­vel cachear:', url);
+                        console.warn('[SW] Não foi possível cachear:', url);
                     })
                 )
             );
@@ -95,6 +95,11 @@ self.addEventListener('fetch', event => {
         return;
     }
 
+    if (url.origin === self.location.origin && ['document', 'script', 'style'].includes(request.destination)) {
+        event.respondWith(networkFirst(request));
+        return;
+    }
+
 
     if (url.origin === 'https://fonts.googleapis.com' ||
         url.origin === 'https://fonts.gstatic.com') {
@@ -118,7 +123,7 @@ async function cacheFirst(request) {
         }
         return response;
     } catch {
-        return new Response('Offline â€” recurso nÃ£o disponÃ­vel no cache.', {
+        return new Response('Offline - recurso não disponível no cache.', {
             status: 503,
             headers: { 'Content-Type': 'text/plain; charset=utf-8' }
         });
@@ -137,10 +142,11 @@ async function networkFirst(request) {
     } catch {
         const cached = await caches.match(request);
         if (cached) return cached;
-        return new Response(JSON.stringify({ message: 'Sem conexÃ£o com o servidor.' }), {
+        return new Response(JSON.stringify({ message: 'Sem conexão com o servidor.' }), {
             status: 503,
             headers: { 'Content-Type': 'application/json' }
         });
     }
 }
+
 
