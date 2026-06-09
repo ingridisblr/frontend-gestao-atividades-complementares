@@ -1,4 +1,4 @@
-let cursoEditandoId = null;
+﻿let cursoEditandoId = null;
 let cursosCache = [];
 
 const icoEditar = `<svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" width="17" height="17"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
@@ -67,12 +67,12 @@ function renderizarTabela(cursos) {
         const id = curso._id || curso.id;
         const status = curso.ativo === false ? 'inativo' : 'ativo';
         const statusLabel = status === 'ativo' ? 'Ativo' : 'Inativo';
-        const carga = curso.cargaHorariaTotalComplementar ?? '–';
+        const carga = curso.cargaHorariaTotalComplementar ?? '-';
 
         return `
             <tr>
-                <td class="td-nome">${curso.nome || '–'}</td>
-                <td><span class="badge-codigo">${curso.codigo || '–'}</span></td>
+                <td class="td-nome">${curso.nome || '-'}</td>
+                <td><span class="badge-codigo">${curso.codigo || '-'}</span></td>
                 <td>${carga}h</td>
                 <td><span class="badge-status ${status}">${statusLabel}</span></td>
                 <td>

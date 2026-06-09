@@ -6,22 +6,23 @@ let todosCursos = [];
 let todasCategorias = [];
 let atividadeSelecionada = null;
 
-const API_UPLOAD_BASE = 'https://sistema-gestao-atividades-complementares.onrender.com';
-
 const eyeIcon = `
     <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" width="15" height="15">
         <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
         <circle cx="12" cy="12" r="3"/>
     </svg>`;
 
-function normalizarStatus(status) {
-    if (!status) return 'enviada';
+function textoSeguro(valor, fallback = '-') {
+    return valor === undefined || valor === null || valor === '' ? fallback : String(valor);
+}
 
-    const s = String(status).trim().toLowerCase();
+function normalizarStatus(status) {
+    const s = textoSeguro(status, 'enviada').trim().toLowerCase();
 
     const map = {
         pendente: 'enviada',
         enviada: 'enviada',
+        enviado: 'enviada',
         'em análise': 'em análise',
         'em analise': 'em análise',
         aprovada: 'aprovada',
@@ -41,25 +42,77 @@ function labelStatus(status) {
         reprovada: 'Reprovada'
     };
 
-    return map[normalizarStatus(status)] || status || 'Enviada';
+    return map[normalizarStatus(status)] || textoSeguro(status, 'Enviada');
+}
+
+function classeStatus(status) {
+    return normalizarStatus(status).replace(/\s+/g, '-');
 }
 
 function formatarData(data) {
-    if (!data) return '–';
-
+    if (!data) return '-';
     const d = new Date(data);
-
-    if (isNaN(d.getTime())) return '–';
-
+    if (Number.isNaN(d.getTime())) return '-';
     return d.toLocaleDateString('pt-BR');
 }
 
 function obterAluno(a) {
-    return a.alunoId?.nome || a.aluno?.nome || a.nomeAluno || a.nome || '–';
+    return textoSeguro(a.alunoId?.nome || a.aluno?.nome || a.nomeAluno || a.alunoNome || a.nome);
+}
+
+function obterAlunoId(a) {
+    const aluno = a.alunoId || a.aluno || a.aluno_id || null;
+    return aluno?._id || aluno?.id || aluno || '';
+}
+
+function normalizarNomeArquivo(nome = '') {
+    return String(nome || '').trim().toLowerCase();
+}
+
+function escolherCertificado(certificados = [], arquivoReferencia = null) {
+    if (!Array.isArray(certificados) || certificados.length === 0) return null;
+
+    const nomeReferencia = normalizarNomeArquivo(
+        arquivoReferencia?.nomeArquivo || arquivoReferencia?.filename || arquivoReferencia?.name
+    );
+
+    if (nomeReferencia) {
+        const porNome = certificados.find(certificado => {
+            const nomeCertificado = normalizarNomeArquivo(
+                certificado.nomeArquivo || certificado.filename || certificado.name
+            );
+            return nomeCertificado === nomeReferencia;
+        });
+
+        if (porNome) return porNome;
+    }
+
+    return [...certificados].sort((a, b) => {
+        const dataA = new Date(a.dataEnvio || a.createdAt || a.dataCriacao || 0).getTime();
+        const dataB = new Date(b.dataEnvio || b.createdAt || b.dataCriacao || 0).getTime();
+        return dataB - dataA;
+    })[0];
+}
+
+async function buscarCertificadoFallback(atividade, arquivoReferencia = null) {
+    const alunoId = obterAlunoId(atividade);
+    if (!alunoId) return null;
+
+    try {
+        const res = await apiFetch(`/api/certificados/aluno/${alunoId}`);
+        if (!res || !res.ok) return null;
+
+        const data = await res.json().catch(() => []);
+        const certificados = Array.isArray(data) ? data : (data.certificados || data.data || []);
+        return escolherCertificado(certificados, arquivoReferencia);
+    } catch (err) {
+        console.warn('Nao foi possivel buscar certificado do aluno:', err);
+        return null;
+    }
 }
 
 function obterCurso(a) {
-    return a.cursoId?.nome || a.curso?.nome || a.curso || '–';
+    return textoSeguro(a.cursoId?.nome || a.curso?.nome || a.nomeCurso || a.curso);
 }
 
 function obterCursoId(a) {
@@ -67,90 +120,92 @@ function obterCursoId(a) {
 }
 
 function obterCategoria(a) {
-    return a.categoriaId?.nome || a.categoria?.nome || a.categoria || '–';
+    return textoSeguro(a.categoriaId?.nome || a.categoria?.nome || a.nomeCategoria || a.categoria);
+}
+
+function obterAreaCategoria(a) {
+    return textoSeguro(a.categoriaId?.areaParametro || a.categoria?.areaParametro || a.areaParametroCategoria || a.areaParametro);
 }
 
 function obterHoras(a) {
-    return a.cargaHorariaInformada || a.cargaHorariaValidada || a.cargaHoraria || 0;
+    return a.cargaHorariaInformada ?? a.cargaHorariaValidada ?? a.cargaHoraria ?? a.horas ?? '';
 }
 
 function obterData(a) {
-    return a.dataEnvio || a.dataCriacao || a.createdAt || a.dataRealizacao || a.data;
+    return a.dataEnvio || a.dataCriacao || a.createdAt || a.dataRealizacao || a.data || a.updatedAt;
 }
 
 function obterTitulo(a) {
-    return a.titulo || a.nomeAtividade || '–';
+    return textoSeguro(a.titulo || a.nomeAtividade || a.nome);
 }
 
 function obterDescricao(a) {
-    return a.descricao || '–';
+    return textoSeguro(a.descricao || a.observacao || a.resumo);
 }
 
 function obterArquivo(a) {
     if (Array.isArray(a.anexos) && a.anexos.length > 0) return a.anexos[0];
-    if (a.anexo) return a.anexo;
-    if (a.arquivo) return a.arquivo;
-    return null;
+    return a.anexo || a.arquivo || null;
+}
+
+function baseApi() {
+    return typeof API_URL !== 'undefined' ? API_URL : 'https://sistema-gestao-atividades-complementares.onrender.com';
 }
 
 function obterUrlArquivo(arquivo) {
     if (!arquivo) return null;
 
-    const url = arquivo.urlArquivo || arquivo.url || arquivo.caminho || arquivo.path;
+    const valor = arquivo.urlArquivo ||
+        arquivo.caminho ||
+        arquivo.path ||
+        arquivo.url ||
+        arquivo.filename;
+
+    if (!valor) return null;
+
+    const base = baseApi();
+    let url = String(valor).trim().replace(/\\/g, '/');
 
     if (!url) return null;
-    if (url.startsWith('http')) return url;
+    if (/^https?:\/\//i.test(url)) return encodeURI(url);
+    if (url.startsWith('/')) return encodeURI(`${base}${url}`);
+    if (url.startsWith('uploads/')) return encodeURI(`${base}/${url}`);
+    if (!url.includes('/')) return encodeURI(`${base}/uploads/${url}`);
 
-    return `${API_UPLOAD_BASE}${url.startsWith('/') ? url : `/${url}`}`;
+    return encodeURI(`${base}/${url}`);
 }
 
-function obterTipoArquivo(arquivo) {
-    return String(
-        arquivo?.tipoArquivo ||
-        arquivo?.mimetype ||
-        arquivo?.tipo ||
+function obterTipoArquivo(arquivo, url = '') {
+    return textoSeguro(
+        arquivo?.tipoArquivo || arquivo?.mimetype || arquivo?.tipo || arquivo?.contentType || url,
         ''
     ).toLowerCase();
 }
 
 function renderizarTabela(atividades) {
     const tbody = document.getElementById('tabelaBody');
-
     if (!tbody) return;
 
-    if (!atividades || atividades.length === 0) {
-        tbody.innerHTML = `
-            <tr>
-                <td colspan="7" class="empty-table">Nenhuma atividade encontrada</td>
-            </tr>
-        `;
+    if (!Array.isArray(atividades) || atividades.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" class="empty-table">Nenhuma atividade encontrada.</td></tr>';
         return;
     }
 
     tbody.innerHTML = atividades.map(a => {
         const status = normalizarStatus(a.status);
         const id = a._id || a.id;
+        const horas = obterHoras(a);
 
         return `
             <tr>
                 <td class="td-aluno">${obterAluno(a)}</td>
                 <td class="td-curso">${obterCurso(a)}</td>
                 <td>${obterCategoria(a)}</td>
-                <td class="td-carga">${obterHoras(a) ? obterHoras(a) + 'h' : '–'}</td>
-                <td>
-                    <span class="badge ${status.replace(' ', '-')}">
-                        ${labelStatus(status)}
-                    </span>
-                </td>
+                <td class="td-carga">${horas !== '' ? `${horas}h` : '-'}</td>
+                <td><span class="badge ${classeStatus(status)}">${labelStatus(status)}</span></td>
                 <td class="td-data">${formatarData(obterData(a))}</td>
                 <td>
-                    ${
-                        id
-                            ? `<button class="btn-detalhes" onclick="abrirModal('${id}')">
-                                    ${eyeIcon} Ver Detalhes
-                               </button>`
-                            : `<span class="empty-table">Sem ID</span>`
-                    }
+                    ${id ? `<button class="btn-detalhes" onclick="abrirModal('${id}')">${eyeIcon} Ver detalhes</button>` : '-'}
                 </td>
             </tr>
         `;
@@ -165,7 +220,7 @@ function filtrar() {
         const statusAtividade = normalizarStatus(a.status);
         const statusOk = !status ||
             statusAtividade === status ||
-            (status === 'pendente' && ['enviada', 'em análise', 'em anÃ¡lise'].includes(statusAtividade));
+            (status === 'pendente' && ['enviada', 'em análise'].includes(statusAtividade));
         const cursoOk = !curso || String(obterCursoId(a)) === String(curso);
 
         return statusOk && cursoOk;
@@ -179,22 +234,17 @@ async function carregarAtividades() {
         const cursoId = coordCursoSelecionadoId(todosCursos);
         const res = await apiFetch(`/api/atividades${cursoId ? `?cursoId=${cursoId}` : ''}`);
 
-        if (!res.ok) throw new Error('Erro ao buscar atividades');
+        if (!res || !res.ok) throw new Error('Erro ao buscar atividades');
 
         const data = await res.json();
-
         todasAtividades = coordFiltrarAtividadesCursoSelecionado(coordNormalizarLista(data, 'atividades'), todosCursos);
 
         filtrar();
-
     } catch (err) {
         console.error('Erro ao carregar atividades:', err);
-
         document.getElementById('tabelaBody').innerHTML = `
             <tr>
-                <td colspan="7" class="empty-table">
-                    Erro ao carregar atividades. Tente novamente.
-                </td>
+                <td colspan="7" class="empty-table">Erro ao carregar atividades. Tente novamente.</td>
             </tr>
         `;
     }
@@ -223,7 +273,6 @@ async function carregarDadosFormulario() {
         popularSelectCursos();
         popularFiltroCurso();
         popularSelectCategorias();
-
     } catch (err) {
         console.error('Erro ao carregar dados do formulário:', err);
     }
@@ -286,22 +335,7 @@ function popularSelectCategorias() {
     });
 }
 
-function abrirModalEnvio() {
-    document.getElementById('modalOverlay').classList.add('show');
-    document.getElementById('modalEnvioAtividade').classList.add('show');
-    document.getElementById('modalEnvioAtividade').setAttribute('aria-hidden', 'false');
-}
-
-function fecharModalEnvio() {
-    document.getElementById('modalEnvioAtividade').classList.remove('show');
-    document.getElementById('modalEnvioAtividade').setAttribute('aria-hidden', 'true');
-
-    if (!document.getElementById('modalAtividade').classList.contains('show')) {
-        document.getElementById('modalOverlay').classList.remove('show');
-    }
-}
-
-function abrirModal(id) {
+async function abrirModal(id) {
     atividadeSelecionada = todasAtividades.find(a => String(a._id || a.id) === String(id));
 
     if (!atividadeSelecionada) {
@@ -310,38 +344,56 @@ function abrirModal(id) {
     }
 
     const a = atividadeSelecionada;
-    const arquivo = obterArquivo(a);
-    const urlArquivo = obterUrlArquivo(arquivo);
-    const tipoArquivo = obterTipoArquivo(arquivo);
+    let arquivo = obterArquivo(a);
+    let urlArquivo = obterUrlArquivo(arquivo);
+    let tipoArquivo = obterTipoArquivo(arquivo, urlArquivo || '');
+    const horas = obterHoras(a);
 
     document.getElementById('atividadeId').value = a._id || a.id;
     document.getElementById('detalheAluno').textContent = obterAluno(a);
     document.getElementById('detalheCurso').textContent = obterCurso(a);
     document.getElementById('detalheCategoria').textContent = obterCategoria(a);
-    document.getElementById('detalheHoras').textContent = obterHoras(a) ? `${obterHoras(a)}h` : '–';
+    document.getElementById('detalheAreaCategoria').textContent = obterAreaCategoria(a);
+    document.getElementById('detalheHoras').textContent = horas !== '' ? `${horas}h` : '-';
     document.getElementById('detalheStatus').textContent = labelStatus(a.status);
     document.getElementById('detalheData').textContent = formatarData(obterData(a));
     document.getElementById('detalheTitulo').textContent = obterTitulo(a);
     document.getElementById('detalheDescricao').textContent = obterDescricao(a);
-
-    document.getElementById('cargaHorariaValidada').value = a.cargaHorariaValidada || obterHoras(a) || '';
+    document.getElementById('cargaHorariaValidada').value = a.cargaHorariaValidada || horas || '';
     document.getElementById('observacaoCoordenador').value = a.observacaoCoordenador || '';
     document.getElementById('justificativaReprovacao').value = a.justificativaReprovacao || '';
 
-    renderizarArquivo(urlArquivo, tipoArquivo);
+    renderizarArquivo(urlArquivo, tipoArquivo, arquivo);
 
-    document.getElementById('modalOverlay').classList.add('show');
-    document.getElementById('modalAtividade').classList.add('show');
-    document.getElementById('modalAtividade').setAttribute('aria-hidden', 'false');
+    document.getElementById('modalOverlay')?.classList.add('open');
+    document.getElementById('modalAtividade')?.classList.add('open');
+    document.getElementById('modalAtividade')?.setAttribute('aria-hidden', 'false');
+
+    if (!urlArquivo) {
+        renderizarArquivo(null, '', arquivo, 'Buscando certificado salvo do aluno...');
+        const certificado = await buscarCertificadoFallback(a, arquivo);
+
+        if (certificado) {
+            arquivo = { ...(arquivo || {}), ...certificado };
+            urlArquivo = obterUrlArquivo(arquivo);
+            tipoArquivo = obterTipoArquivo(arquivo, urlArquivo || '');
+        }
+
+        renderizarArquivo(urlArquivo, tipoArquivo, arquivo);
+    }
 }
 
-function renderizarArquivo(url, tipo) {
+function renderizarArquivo(url, tipo, arquivo = null, mensagemSemUrl = null) {
     const preview = document.getElementById('previewArquivo');
-
     if (!preview) return;
 
     if (!url) {
-        preview.innerHTML = 'Nenhum arquivo encontrado.';
+        const nome = arquivo?.nomeArquivo || arquivo?.filename || '';
+        preview.innerHTML = `
+            <span class="arquivo-vazio">
+                ${mensagemSemUrl || `${nome ? `Arquivo informado: ${nome}. ` : ''}O registro não possui caminho do arquivo salvo no servidor.`}
+            </span>
+        `;
         return;
     }
 
@@ -349,46 +401,32 @@ function renderizarArquivo(url, tipo) {
 
     if (tipo.includes('pdf') || urlLower.endsWith('.pdf')) {
         preview.innerHTML = `
-            <iframe src="${url}" class="pdf-preview"></iframe>
-            <a href="${url}" target="_blank" class="btn-detalhes" style="margin-top:10px;">
-                Abrir PDF em nova aba
-            </a>
+            <iframe src="${url}" title="Certificado em PDF"></iframe>
+            <a href="${url}" target="_blank" class="link-arquivo" rel="noopener">Abrir PDF em nova aba</a>
         `;
         return;
     }
 
-    if (
-        tipo.includes('image') ||
-        urlLower.endsWith('.jpg') ||
-        urlLower.endsWith('.jpeg') ||
-        urlLower.endsWith('.png')
-    ) {
+    if (tipo.includes('image') || /\.(jpg|jpeg|png|webp)$/i.test(urlLower)) {
         preview.innerHTML = `
-            <img src="${url}" alt="Certificado enviado" class="image-preview">
-            <a href="${url}" target="_blank" class="btn-detalhes" style="margin-top:10px;">
-                Abrir imagem em nova aba
-            </a>
+            <img src="${url}" alt="Certificado enviado">
+            <a href="${url}" target="_blank" class="link-arquivo" rel="noopener">Abrir imagem em nova aba</a>
         `;
         return;
     }
 
-    preview.innerHTML = `
-        <a href="${url}" target="_blank" class="btn-detalhes">
-            Abrir arquivo enviado
-        </a>
-    `;
+    preview.innerHTML = `<a href="${url}" target="_blank" class="link-arquivo" rel="noopener">Abrir arquivo enviado</a>`;
 }
 
 function fecharModal() {
-    document.getElementById('modalAtividade').classList.remove('show');
-    document.getElementById('modalAtividade').setAttribute('aria-hidden', 'true');
-    document.getElementById('modalOverlay').classList.remove('show');
+    document.getElementById('modalAtividade')?.classList.remove('open');
+    document.getElementById('modalAtividade')?.setAttribute('aria-hidden', 'true');
+    document.getElementById('modalOverlay')?.classList.remove('open');
     atividadeSelecionada = null;
 }
 
 function fecharTodosModais() {
     fecharModal();
-    fecharModalEnvio();
 }
 
 async function atualizarStatus(novoStatus) {
@@ -423,90 +461,27 @@ async function atualizarStatus(novoStatus) {
     try {
         const res = await apiFetch(`/api/atividades/${id}/status`, {
             method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json'
-            },
             body: JSON.stringify(body)
         });
 
-        const data = await res.json().catch(() => ({}));
+        const data = await res?.json().catch(() => ({}));
 
-        if (!res.ok) {
+        if (!res || !res.ok) {
             alert(data.message || data.mensagem || data.erro || 'Erro ao atualizar status.');
             return;
         }
 
         alert(`Atividade ${novoStatus.toLowerCase()} com sucesso!`);
-
         fecharModal();
         await carregarAtividades();
-
     } catch (err) {
         console.error('Erro ao atualizar status:', err);
         alert('Erro ao atualizar status da atividade.');
     }
 }
 
-async function enviarAtividade(event) {
-    event.preventDefault();
-
-    const alunoId = document.getElementById('inputAlunoId').value;
-    const cursoId = document.getElementById('inputCursoId').value;
-    const categoriaId = document.getElementById('inputCategoriaId').value;
-    const titulo = document.getElementById('inputTitulo').value.trim();
-    const descricao = document.getElementById('inputDescricao').value.trim();
-    const dataRealizacao = document.getElementById('inputDataRealizacao').value;
-    const cargaHorariaInformada = document.getElementById('inputCargaHoraria').value;
-    const arquivo = document.getElementById('inputAnexos').files[0];
-
-    if (!alunoId || !cursoId || !categoriaId || !titulo || !descricao || !dataRealizacao || !cargaHorariaInformada || !arquivo) {
-        alert('Preencha todos os campos e selecione um certificado.');
-        return;
-    }
-
-    const formData = new FormData();
-    formData.append('alunoId', alunoId);
-    formData.append('cursoId', cursoId);
-    formData.append('categoriaId', categoriaId);
-    formData.append('titulo', titulo);
-    formData.append('descricao', descricao);
-    formData.append('dataRealizacao', dataRealizacao);
-    formData.append('cargaHorariaInformada', cargaHorariaInformada);
-    formData.append('anexos', arquivo);
-
-    try {
-        const res = await apiFetch('/api/atividades', {
-            method: 'POST',
-            body: formData
-        });
-
-        const data = await res.json().catch(() => ({}));
-
-        if (!res.ok) {
-            alert(data.message || data.mensagem || data.erro || 'Erro ao enviar atividade.');
-            return;
-        }
-
-        alert('Atividade enviada com sucesso!');
-
-        document.getElementById('formEnvioAtividade').reset();
-
-        fecharModalEnvio();
-        await carregarAtividades();
-
-    } catch (err) {
-        console.error('Erro ao enviar atividade:', err);
-        alert('Erro ao enviar atividade.');
-    }
-}
-
 document.addEventListener('DOMContentLoaded', async () => {
     await carregarDadosFormulario();
     await carregarAtividades();
-
-    const form = document.getElementById('formEnvioAtividade');
-
-    if (form) {
-        form.addEventListener('submit', enviarAtividade);
-    }
 });
+

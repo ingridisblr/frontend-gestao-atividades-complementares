@@ -30,7 +30,7 @@ async function coordSincronizarUsuarioDaApi() {
             return usuario;
         }
     } catch (error) {
-        console.warn('NÃ£o foi possÃ­vel atualizar dados do coordenador autenticado:', error);
+        console.warn('Não foi possível atualizar dados do coordenador autenticado:', error);
     }
 
     return coordUser();
@@ -159,4 +159,5 @@ function coordFiltrarAlunosCursoSelecionado(alunos, cursosBase = []) {
 
     return alunos.filter(aluno => coordAlunoCursoIds(aluno).some(id => String(id) === String(cursoId)));
 }
+
 

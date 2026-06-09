@@ -30,7 +30,7 @@ function mostrarToast(msg) {
 }
 
 function formatarData(iso) {
-    if (!iso) return 'â€“';
+    if (!iso) return '-';
     return new Date(iso).toLocaleDateString('pt-BR');
 }
 
@@ -52,7 +52,7 @@ function obterIdCursoCoordenado(coord) {
 }
 
 function obterCurso(coord) {
-    if (!coord?.cursosCoordenados?.length) return 'â€“';
+    if (!coord?.cursosCoordenados?.length) return '-';
 
     return coord.cursosCoordenados
         .map(item => {
@@ -126,11 +126,11 @@ function renderizarTabela(lista) {
                 <td>
                     <div class="td-nome-cell">
                         <div class="coord-avatar">${icoAvatar}</div>
-                        <span class="td-nome-text">${c.nome || 'â€“'}</span>
+                        <span class="td-nome-text">${c.nome || '-'}</span>
                     </div>
                 </td>
                 <td><span class="badge-codigo">${c.codigoUsuario || '–'}</span></td>
-                <td class="td-email">${c.email || 'â€“'}</td>
+                <td class="td-email">${c.email || '-'}</td>
                 <td>${obterCurso(c)}</td>
                 <td>
                     <span class="badge-status ${status}">
@@ -189,7 +189,7 @@ async function salvarCoordenador() {
     const status = document.getElementById('inputStatus').value;
 
     if (!nome || !email || !cursoId) {
-        mostrarToast('Preencha todos os campos obrigatÃ³rios.');
+        mostrarToast('Preencha todos os campos obrigatórios.');
         return;
     }
 
@@ -302,6 +302,7 @@ async function inicializar() {
 }
 
 inicializar();
+
 
 
 

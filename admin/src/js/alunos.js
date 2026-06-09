@@ -1,4 +1,4 @@
-
+﻿
 let alunos = [];
 let cursosDisponiveis = [];
 let modoEdicao = null;
@@ -68,7 +68,7 @@ function obterNomeCursoAluno(aluno) {
 
     const primeiro = aluno?.cursos?.[0];
 
-    if (!primeiro) return '–';
+    if (!primeiro) return '-';
 
     const curso = primeiro.cursoId || primeiro;
 
@@ -77,7 +77,7 @@ function obterNomeCursoAluno(aluno) {
         return encontrado?.nome || encontrado?.titulo || encontrado?.codigo || curso;
     }
 
-    return curso.nome || curso.titulo || curso.codigo || '–';
+    return curso.nome || curso.titulo || curso.codigo || '-';
 }
 
 async function carregarAlunos() {
@@ -115,10 +115,10 @@ function renderTabela(lista) {
 
         return `
             <tr>
-                <td class="td-nome">${escapeHtml(a.nome || '–')}</td>
-                <td><span class="badge-matricula">${escapeHtml(a.matricula || '–')}</span></td>
+                <td class="td-nome">${escapeHtml(a.nome || '-')}</td>
+                <td><span class="badge-matricula">${escapeHtml(a.matricula || '-')}</span></td>
                 <td>${escapeHtml(obterNomeCursoAluno(a))}</td>
-                <td class="td-email">${escapeHtml(a.email || '–')}</td>
+                <td class="td-email">${escapeHtml(a.email || '-')}</td>
                 <td>
                     <div class="acoes">
                         <button class="btn-acao editar" onclick="abrirModalEdicao('${id}')" title="Editar">

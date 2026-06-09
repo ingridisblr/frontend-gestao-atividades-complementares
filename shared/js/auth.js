@@ -1,4 +1,4 @@
-function verificarAuth(perfilNecessario = null) {
+﻿function verificarAuth(perfilNecessario = null) {
     const token = localStorage.getItem('token');
     const user = JSON.parse(localStorage.getItem('user'));
 

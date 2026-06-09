@@ -1,4 +1,4 @@
-.stats-grid-relatorios {
+﻿.stats-grid-relatorios {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 16px;

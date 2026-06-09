@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-pt">
 <head>
     <meta charset="UTF-8">
@@ -25,7 +25,7 @@
             <img src="../../../assets/imagens/k-logo1.png" alt="KORE" class="sidebar-k-logo">
             <div>
                 <div class="brand-name">KORE</div>
-                <div class="brand-sub">AdministraÃ§Ã£o</div>
+                <div class="brand-sub">Administração</div>
             </div>
         </div>
 
@@ -70,7 +70,7 @@
                     <path d="M6 20v-2a6 6 0 0112 0v2"/>
                     <path d="M19 11l1.5 1.5L23 10"/>
                 </svg>
-                CoordenaÃ§Ã£o
+                Coordenação
             </a>
 
             <a class="nav-item" href="alunos.html">
@@ -121,7 +121,7 @@
         <main class="content">
             <div class="page-header-row">
                 <div>
-                    <h1 class="page-title">Atividades (VisÃ£o Global)</h1>
+                    <h1 class="page-title">Atividades (Visão Global)</h1>
                     <p class="page-subtitle">Visualize, envie, analise e valide os certificados dos alunos</p>
                 </div>
 
@@ -134,7 +134,7 @@
                     <select id="filtroStatus" class="filtro-select" onchange="filtrar()">
                         <option value="">Todos</option>
                         <option value="enviada">Enviada</option>
-                        <option value="em anÃ¡lise">Em anÃ¡lise</option>
+                        <option value="em análise">Em análise</option>
                         <option value="aprovada">Aprovada</option>
                         <option value="reprovada">Reprovada</option>
                     </select>
@@ -152,7 +152,7 @@
                             <th>Horas</th>
                             <th>Status</th>
                             <th>Data</th>
-                            <th>AÃ§Ã£o</th>
+                            <th>Ação</th>
                         </tr>
                     </thead>
                     <tbody id="tabelaBody">
@@ -172,7 +172,7 @@
    
     <section id="modalAtividade" class="modal modal-atividade" aria-hidden="true">
         <div class="modal-header">
-            <h3>AnÃ¡lise da Atividade</h3>
+            <h3>Análise da Atividade</h3>
             <button class="modal-close" onclick="fecharModal()" aria-label="Fechar">
                 <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" width="20" height="20">
                     <path d="M18 6L6 18M6 6l12 12"/>
@@ -184,23 +184,23 @@
             <input type="hidden" id="atividadeId">
 
             <div class="detalhes-grid">
-                <div class="detalhe-item"><span>Aluno</span><strong id="detalheAluno">â€“</strong></div>
-                <div class="detalhe-item"><span>Curso</span><strong id="detalheCurso">â€“</strong></div>
-                <div class="detalhe-item"><span>Categoria</span><strong id="detalheCategoria">â€“</strong></div>
+                <div class="detalhe-item"><span>Aluno</span><strong id="detalheAluno">-</strong></div>
+                <div class="detalhe-item"><span>Curso</span><strong id="detalheCurso">-</strong></div>
+                <div class="detalhe-item"><span>Categoria</span><strong id="detalheCategoria">-</strong></div>
                 <div class="detalhe-item"><span>Área</span><strong id="detalheAreaCategoria">–</strong></div>
-                <div class="detalhe-item"><span>Horas informadas</span><strong id="detalheHoras">â€“</strong></div>
-                <div class="detalhe-item"><span>Status atual</span><strong id="detalheStatus">â€“</strong></div>
-                <div class="detalhe-item"><span>Data de envio</span><strong id="detalheData">â€“</strong></div>
+                <div class="detalhe-item"><span>Horas informadas</span><strong id="detalheHoras">-</strong></div>
+                <div class="detalhe-item"><span>Status atual</span><strong id="detalheStatus">-</strong></div>
+                <div class="detalhe-item"><span>Data de envio</span><strong id="detalheData">-</strong></div>
             </div>
 
             <div class="form-group">
-                <label class="form-label">TÃ­tulo da atividade</label>
-                <div class="texto-detalhe" id="detalheTitulo">â€“</div>
+                <label class="form-label">Título da atividade</label>
+                <div class="texto-detalhe" id="detalheTitulo">-</div>
             </div>
 
             <div class="form-group">
-                <label class="form-label">DescriÃ§Ã£o</label>
-                <div class="texto-detalhe" id="detalheDescricao">â€“</div>
+                <label class="form-label">Descrição</label>
+                <div class="texto-detalhe" id="detalheDescricao">-</div>
             </div>
 
             <div class="form-group">
@@ -209,18 +209,18 @@
             </div>
 
             <div class="form-group">
-                <label class="form-label" for="cargaHorariaValidada">Carga horÃ¡ria validada</label>
+                <label class="form-label" for="cargaHorariaValidada">Carga horária validada</label>
                 <input type="number" id="cargaHorariaValidada" class="form-input" min="0" placeholder="Ex.: 20">
             </div>
 
             <div class="form-group">
-                <label class="form-label" for="observacaoCoordenador">Minha anÃ¡lise</label>
-                <textarea id="observacaoCoordenador" class="form-input" rows="4" placeholder="Escreva sua anÃ¡lise sobre o certificado enviado..."></textarea>
+                <label class="form-label" for="observacaoCoordenador">Minha análise</label>
+                <textarea id="observacaoCoordenador" class="form-input" rows="4" placeholder="Escreva sua análise sobre o certificado enviado..."></textarea>
             </div>
 
             <div class="form-group">
-                <label class="form-label" for="justificativaReprovacao">Justificativa em caso de reprovaÃ§Ã£o</label>
-                <textarea id="justificativaReprovacao" class="form-input" rows="3" placeholder="ObrigatÃ³rio apenas se a atividade for reprovada..."></textarea>
+                <label class="form-label" for="justificativaReprovacao">Justificativa em caso de reprovação</label>
+                <textarea id="justificativaReprovacao" class="form-input" rows="3" placeholder="Obrigatório apenas se a atividade for reprovada..."></textarea>
             </div>
         </div>
 
@@ -245,8 +245,9 @@
     <script src="../../../shared/js/api.js"></script>
     <script src="../../../shared/js/auth.js"></script>
     <script src="../../../shared/js/components.js"></script>
-    <script src="../js/atividades.js"></script>
+    <script src="../js/atividades.js?v=certificados-20260609"></script>
 </body>
 </html>
+
 
 

@@ -1,11 +1,11 @@
-﻿let todasAtividades = [];
+let todasAtividades = [];
 let atividadeSelecionada = null;
 
 if (typeof verificarAuth === 'function') {
     verificarAuth();
 }
 
-function textoSeguro(valor, fallback = 'â€“') {
+function textoSeguro(valor, fallback = '-') {
     return valor === undefined || valor === null || valor === '' ? fallback : String(valor);
 }
 
@@ -16,8 +16,8 @@ function normalizarStatus(status) {
         'pendente': 'enviada',
         'enviado': 'enviada',
         'enviada': 'enviada',
-        'em anÃ¡lise': 'em anÃ¡lise',
-        'em analise': 'em anÃ¡lise',
+        'em an\u00e1lise': 'em an\u00e1lise',
+        'em analise': 'em an\u00e1lise',
         'aprovada': 'aprovada',
         'aprovado': 'aprovada',
         'reprovada': 'reprovada',
@@ -34,7 +34,7 @@ function classeStatus(status) {
 function labelStatus(status) {
     const map = {
         'enviada': 'Enviada',
-        'em anÃ¡lise': 'Em anÃ¡lise',
+        'em an\u00e1lise': 'Em an\u00e1lise',
         'aprovada': 'Aprovada',
         'reprovada': 'Reprovada'
     };
@@ -43,10 +43,10 @@ function labelStatus(status) {
 }
 
 function formatarData(data) {
-    if (!data) return 'â€“';
+    if (!data) return '-';
 
     const d = new Date(data);
-    if (Number.isNaN(d.getTime())) return 'â€“';
+    if (Number.isNaN(d.getTime())) return '-';
 
     return d.toLocaleDateString('pt-BR', {
         day: '2-digit',
@@ -57,6 +57,56 @@ function formatarData(data) {
 
 function obterAluno(a) {
     return textoSeguro(a.alunoId?.nome || a.aluno?.nome || a.nomeAluno || a.alunoNome || a.nome);
+}
+function obterAlunoId(a) {
+    const aluno = a.alunoId || a.aluno || a.aluno_id || null;
+    return aluno?._id || aluno?.id || aluno || '';
+}
+
+function normalizarNomeArquivo(nome = '') {
+    return String(nome || '').trim().toLowerCase();
+}
+
+function escolherCertificado(certificados = [], arquivoReferencia = null) {
+    if (!Array.isArray(certificados) || certificados.length === 0) return null;
+
+    const nomeReferencia = normalizarNomeArquivo(
+        arquivoReferencia?.nomeArquivo || arquivoReferencia?.filename || arquivoReferencia?.name
+    );
+
+    if (nomeReferencia) {
+        const porNome = certificados.find(certificado => {
+            const nomeCertificado = normalizarNomeArquivo(
+                certificado.nomeArquivo || certificado.filename || certificado.name
+            );
+            return nomeCertificado === nomeReferencia;
+        });
+
+        if (porNome) return porNome;
+    }
+
+    return [...certificados].sort((a, b) => {
+        const dataA = new Date(a.dataEnvio || a.createdAt || a.dataCriacao || 0).getTime();
+        const dataB = new Date(b.dataEnvio || b.createdAt || b.dataCriacao || 0).getTime();
+        return dataB - dataA;
+    })[0];
+}
+
+async function buscarCertificadoFallback(atividade, arquivoReferencia = null) {
+    const alunoId = obterAlunoId(atividade);
+    if (!alunoId) return null;
+
+    try {
+        const res = await apiFetch(`/api/certificados/aluno/${alunoId}`);
+        if (!res || !res.ok) return null;
+
+        const data = await res.json().catch(() => []);
+        const certificados = Array.isArray(data) ? data : (data.certificados || data.data || []);
+        return escolherCertificado(certificados, arquivoReferencia);
+    } catch (err) {
+        console.warn('Nao foi possivel buscar certificado do aluno:', err);
+        return null;
+    }
 }
 
 function obterCurso(a) {
@@ -99,13 +149,18 @@ function baseApi() {
 function obterUrlArquivo(arquivo) {
     if (!arquivo) return null;
 
-    const url = arquivo.urlArquivo || arquivo.caminho || arquivo.path || arquivo.url || arquivo.filename || arquivo.nomeArquivo;
+    const url = arquivo.urlArquivo || arquivo.caminho || arquivo.path || arquivo.url || arquivo.filename;
     if (!url) return null;
 
-    if (String(url).startsWith('http')) return url;
-    if (String(url).startsWith('/')) return `${baseApi()}${url}`;
+    const normalizada = String(url).trim().replace(/\\/g, '/');
 
-    return `${baseApi()}/${url}`;
+    if (!normalizada) return null;
+    if (/^https?:\/\//i.test(normalizada)) return encodeURI(normalizada);
+    if (normalizada.startsWith('/')) return encodeURI(`${baseApi()}${normalizada}`);
+    if (normalizada.startsWith('uploads/')) return encodeURI(`${baseApi()}/${normalizada}`);
+    if (!normalizada.includes('/')) return encodeURI(`${baseApi()}/uploads/${normalizada}`);
+
+    return encodeURI(`${baseApi()}/${normalizada}`);
 }
 
 function obterTipoArquivo(arquivo, url = '') {
@@ -135,14 +190,14 @@ function renderizarTabela(atividades) {
                 <td class="td-curso">${obterCurso(a)}</td>
                 <td>${obterCategoria(a)}</td>
                 <td>${obterAreaCategoria(a)}</td>
-                <td class="td-horas">${horas !== '' ? `${horas}h` : 'â€“'}</td>
+                <td class="td-horas">${horas !== '' ? `${horas}h` : '-'}</td>
                 <td><span class="badge ${classeStatus(status)}">${labelStatus(status)}</span></td>
                 <td class="td-data">${formatarData(obterData(a))}</td>
                 <td>
                     ${id ? `
                         <button class="btn-detalhes" onclick="abrirModal('${id}')">
                             Ver detalhes
-                        </button>` : 'â€“'}
+                        </button>` : '-'}
                 </td>
             </tr>
         `;
@@ -190,18 +245,18 @@ async function carregarAtividades() {
     }
 }
 
-function abrirModal(id) {
+async function abrirModal(id) {
     atividadeSelecionada = todasAtividades.find(a => String(a._id || a.id) === String(id));
 
     if (!atividadeSelecionada) {
-        alert('Atividade nÃ£o encontrada.');
+        alert('Atividade n\u00e3o encontrada.');
         return;
     }
 
     const a = atividadeSelecionada;
-    const arquivo = obterArquivo(a);
-    const urlArquivo = obterUrlArquivo(arquivo);
-    const tipoArquivo = obterTipoArquivo(arquivo, urlArquivo || '');
+    let arquivo = obterArquivo(a);
+    let urlArquivo = obterUrlArquivo(arquivo);
+    let tipoArquivo = obterTipoArquivo(arquivo, urlArquivo || '');
     const horas = obterHoras(a);
 
     document.getElementById('atividadeId').value = a._id || a.id;
@@ -209,7 +264,7 @@ function abrirModal(id) {
     document.getElementById('detalheCurso').textContent = obterCurso(a);
     document.getElementById('detalheCategoria').textContent = obterCategoria(a);
     document.getElementById('detalheAreaCategoria').textContent = obterAreaCategoria(a);
-    document.getElementById('detalheHoras').textContent = horas !== '' ? `${horas}h` : 'â€“';
+    document.getElementById('detalheHoras').textContent = horas !== '' ? `${horas}h` : '-';
     document.getElementById('detalheStatus').textContent = labelStatus(a.status);
     document.getElementById('detalheData').textContent = formatarData(obterData(a));
     document.getElementById('detalheTitulo').textContent = obterTitulo(a);
@@ -218,26 +273,45 @@ function abrirModal(id) {
     document.getElementById('observacaoCoordenador').value = a.observacaoCoordenador || '';
     document.getElementById('justificativaReprovacao').value = a.justificativaReprovacao || '';
 
-    renderizarArquivo(urlArquivo, tipoArquivo);
+    renderizarArquivo(urlArquivo, tipoArquivo, arquivo);
 
     document.getElementById('modalOverlay').classList.add('open');
     document.getElementById('modalAtividade').classList.add('open');
     document.getElementById('modalAtividade').setAttribute('aria-hidden', 'false');
+
+    if (!urlArquivo) {
+        renderizarArquivo(null, '', arquivo, 'Buscando certificado salvo do aluno...');
+        const certificado = await buscarCertificadoFallback(a, arquivo);
+
+        if (certificado) {
+            arquivo = { ...(arquivo || {}), ...certificado };
+            urlArquivo = obterUrlArquivo(arquivo);
+            tipoArquivo = obterTipoArquivo(arquivo, urlArquivo || '');
+        }
+
+        renderizarArquivo(urlArquivo, tipoArquivo, arquivo);
+    }
 }
 
-function renderizarArquivo(url, tipo) {
+function renderizarArquivo(url, tipo, arquivo = null, mensagemSemUrl = null) {
     const preview = document.getElementById('previewArquivo');
     if (!preview) return;
 
     if (!url) {
-        preview.innerHTML = `<span class="arquivo-vazio">Nenhum arquivo encontrado.</span>`;
+        const origem = arquivo || obterArquivo(atividadeSelecionada) || null;
+        const nome = origem?.nomeArquivo || origem?.filename || '';
+        preview.innerHTML = `
+            <span class="arquivo-vazio">
+                ${mensagemSemUrl || `${nome ? `Arquivo informado: ${nome}. ` : ''}O registro n\u00e3o possui caminho do arquivo salvo no servidor.`}
+            </span>
+        `;
         return;
     }
 
     if (tipo.includes('pdf') || url.toLowerCase().endsWith('.pdf')) {
         preview.innerHTML = `
             <iframe src="${url}" title="Certificado em PDF"></iframe>
-            <a href="${url}" target="_blank" class="link-arquivo">Abrir PDF em nova aba</a>
+            <a href="${url}" target="_blank" class="link-arquivo" rel="noopener">Abrir PDF em nova aba</a>
         `;
         return;
     }
@@ -245,14 +319,13 @@ function renderizarArquivo(url, tipo) {
     if (tipo.includes('image') || /\.(jpg|jpeg|png|webp)$/i.test(url)) {
         preview.innerHTML = `
             <img src="${url}" alt="Certificado enviado">
-            <a href="${url}" target="_blank" class="link-arquivo">Abrir imagem em nova aba</a>
+            <a href="${url}" target="_blank" class="link-arquivo" rel="noopener">Abrir imagem em nova aba</a>
         `;
         return;
     }
 
-    preview.innerHTML = `<a href="${url}" target="_blank" class="link-arquivo">Abrir arquivo enviado</a>`;
+    preview.innerHTML = `<a href="${url}" target="_blank" class="link-arquivo" rel="noopener">Abrir arquivo enviado</a>`;
 }
-
 function fecharModal() {
     document.getElementById('modalOverlay')?.classList.remove('open');
     document.getElementById('modalAtividade')?.classList.remove('open');
@@ -267,7 +340,7 @@ async function atualizarStatus(novoStatus) {
     const justificativaReprovacao = document.getElementById('justificativaReprovacao').value.trim();
 
     if (!id) {
-        alert('Atividade invÃ¡lida.');
+        alert('Atividade inválida.');
         return;
     }
 
@@ -310,5 +383,6 @@ async function atualizarStatus(novoStatus) {
 }
 
 document.addEventListener('DOMContentLoaded', carregarAtividades);
+
 
 

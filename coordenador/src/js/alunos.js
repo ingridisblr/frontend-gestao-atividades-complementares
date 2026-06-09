@@ -1,4 +1,4 @@
-renderTopbar();
+﻿renderTopbar();
 
 let alunosCoord = [];
 let cursosCoord = [];
@@ -12,7 +12,7 @@ function obterNomeCursoAluno(aluno) {
     const idCurso = obterCursoIdAluno(aluno);
     const curso = cursosCoord.find(c => String(c._id || c.id) === String(idCurso));
 
-    return curso?.nome || aluno.curso?.nome || aluno.curso || '–';
+    return curso?.nome || aluno.curso?.nome || aluno.curso || '-';
 }
 
 function cursoSelecionadoAtual() {
@@ -77,10 +77,10 @@ function renderizarAlunosCoord(lista) {
 
         return `
             <tr>
-                <td>${aluno.nome || '–'}</td>
-                <td><span class="badge">${aluno.matricula || '–'}</span></td>
+                <td>${aluno.nome || '-'}</td>
+                <td><span class="badge">${aluno.matricula || '-'}</span></td>
                 <td>${obterNomeCursoAluno(aluno)}</td>
-                <td>${aluno.email || '–'}</td>
+                <td>${aluno.email || '-'}</td>
                 <td>
                     <button class="btn-ver-detalhes" onclick="abrirModalAluno('${id}')">Editar</button>
                 </td>
@@ -204,3 +204,4 @@ async function iniciarAlunosCoord() {
 }
 
 iniciarAlunosCoord();
+
