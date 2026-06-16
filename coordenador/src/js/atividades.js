@@ -5,6 +5,7 @@ let todosAlunos = [];
 let todosCursos = [];
 let todasCategorias = [];
 let atividadeSelecionada = null;
+let statusEmAtualizacao = false;
 
 const eyeIcon = `
     <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" width="15" height="15">
@@ -506,7 +507,24 @@ function aplicarStatusLocal(id, novoStatus, body = {}) {
     filtrar();
 }
 
+function definirBotoesStatusCarregando(carregando, novoStatus = '') {
+    const btnAprovar = document.getElementById('btnAprovarAtividade');
+    const btnReprovar = document.getElementById('btnReprovarAtividade');
+
+    if (btnAprovar) {
+        btnAprovar.disabled = carregando;
+        btnAprovar.textContent = carregando && novoStatus === 'Aprovada' ? 'Aprovando...' : 'Aprovar';
+    }
+
+    if (btnReprovar) {
+        btnReprovar.disabled = carregando;
+        btnReprovar.textContent = carregando && novoStatus === 'Reprovada' ? 'Reprovando...' : 'Reprovar';
+    }
+}
+
 async function atualizarStatus(novoStatus) {
+    if (statusEmAtualizacao) return;
+
     const id = document.getElementById('atividadeId').value;
     const cargaHorariaValidada = document.getElementById('cargaHorariaValidada').value;
     const observacaoCoordenador = document.getElementById('observacaoCoordenador').value.trim();
@@ -547,6 +565,9 @@ async function atualizarStatus(novoStatus) {
     }
 
     try {
+        statusEmAtualizacao = true;
+        definirBotoesStatusCarregando(true, novoStatus);
+
         const res = await apiFetch(`/api/atividades/${id}/status`, {
             method: 'PATCH',
             body: JSON.stringify(body)
@@ -574,10 +595,19 @@ async function atualizarStatus(novoStatus) {
     } catch (err) {
         console.error('Erro ao atualizar status:', err);
         alert('Erro ao atualizar status da atividade.');
+    } finally {
+        statusEmAtualizacao = false;
+        definirBotoesStatusCarregando(false);
     }
 }
 
+function configurarBotoesStatus() {
+    document.getElementById('btnAprovarAtividade')?.addEventListener('click', () => atualizarStatus('Aprovada'));
+    document.getElementById('btnReprovarAtividade')?.addEventListener('click', () => atualizarStatus('Reprovada'));
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
+    configurarBotoesStatus();
     await carregarDadosFormulario();
     await carregarAtividades();
 });
