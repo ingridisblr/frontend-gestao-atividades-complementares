@@ -142,6 +142,14 @@ function obterArquivo(a) {
     return a.anexo || a.arquivo || null;
 }
 
+function obterIndiceArquivo(arquivo) {
+    const anexos = atividadeSelecionada?.anexos;
+    if (!Array.isArray(anexos) || !arquivo) return 0;
+
+    const index = anexos.indexOf(arquivo);
+    return index >= 0 ? index : 0;
+}
+
 function baseApi() {
     return typeof API_URL !== 'undefined' ? API_URL : '';
 }
@@ -163,11 +171,56 @@ function obterUrlArquivo(arquivo) {
     return encodeURI(`${baseApi()}/${normalizada}`);
 }
 
+function obterUrlDownloadArquivo(url, arquivo = null) {
+    if (!atividadeSelecionada) return null;
+
+    const id = atividadeSelecionada._id || atividadeSelecionada.id;
+    if (!id) return null;
+
+    const index = obterIndiceArquivo(arquivo);
+    return `/api/atividades/${id}/anexos/${index}/download`;
+}
+
 function obterTipoArquivo(arquivo, url = '') {
     return textoSeguro(
         arquivo?.tipoArquivo || arquivo?.mimetype || arquivo?.tipo || arquivo?.contentType || url,
         ''
     ).toLowerCase();
+}
+
+async function baixarAnexoAtividade(endpoint, nomeArquivo = 'certificado.pdf') {
+    if (!endpoint) {
+        alert('Não foi possível identificar o arquivo para download.');
+        return;
+    }
+
+    try {
+        const res = await apiFetch(endpoint);
+
+        if (!res || !res.ok) {
+            const data = await res?.json().catch(() => ({}));
+            alert(data.message || 'Não foi possível baixar o PDF.');
+            return;
+        }
+
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = nomeArquivo || 'certificado.pdf';
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(url);
+    } catch (err) {
+        console.error('Erro ao baixar anexo:', err);
+        alert('Erro ao baixar o PDF.');
+    }
+}
+
+async function lerJsonSeguro(res, fallback = {}) {
+    if (!res) return fallback;
+    return res.json().catch(() => fallback);
 }
 
 function renderizarTabela(atividades) {
@@ -309,10 +362,18 @@ function renderizarArquivo(url, tipo, arquivo = null, mensagemSemUrl = null) {
     }
 
     if (tipo.includes('pdf') || url.toLowerCase().endsWith('.pdf')) {
+        const endpointDownload = obterUrlDownloadArquivo(url, arquivo);
+        const nomeArquivo = arquivo?.nomeArquivo || arquivo?.filename || 'certificado.pdf';
+
         preview.innerHTML = `
-            <iframe src="${url}" title="Certificado em PDF"></iframe>
-            <a href="${url}" target="_blank" class="link-arquivo" rel="noopener">Abrir PDF em nova aba</a>
+            <span class="arquivo-vazio">
+                O PDF está disponível para download. A visualização em nova aba foi desativada porque o navegador não conseguiu carregar este arquivo.
+            </span>
+            <button type="button" class="link-arquivo btn-download-arquivo">Baixar PDF</button>
         `;
+        preview.querySelector('.btn-download-arquivo')?.addEventListener('click', () => {
+            baixarAnexoAtividade(endpointDownload, nomeArquivo);
+        });
         return;
     }
 
@@ -331,6 +392,26 @@ function fecharModal() {
     document.getElementById('modalAtividade')?.classList.remove('open');
     document.getElementById('modalAtividade')?.setAttribute('aria-hidden', 'true');
     atividadeSelecionada = null;
+}
+
+function fecharTodosModais() {
+    fecharModal();
+}
+
+function aplicarStatusLocal(id, novoStatus, body = {}) {
+    todasAtividades = todasAtividades.map(atividade => {
+        if (String(atividade._id || atividade.id) !== String(id)) return atividade;
+
+        return {
+            ...atividade,
+            status: novoStatus,
+            observacaoCoordenador: body.observacaoCoordenador ?? atividade.observacaoCoordenador,
+            cargaHorariaValidada: body.cargaHorariaValidada ?? atividade.cargaHorariaValidada,
+            justificativaReprovacao: body.justificativaReprovacao ?? atividade.justificativaReprovacao
+        };
+    });
+
+    renderizarTabela(todasAtividades);
 }
 
 async function atualizarStatus(novoStatus) {
@@ -365,16 +446,25 @@ async function atualizarStatus(novoStatus) {
             body: JSON.stringify(body)
         });
 
-        const data = await res?.json().catch(() => ({}));
+        const data = await lerJsonSeguro(res);
 
         if (!res || !res.ok) {
             alert(data?.message || data?.mensagem || data?.erro || 'Erro ao atualizar status.');
             return;
         }
 
-        alert(`Atividade ${novoStatus.toLowerCase()} com sucesso!`);
+        aplicarStatusLocal(id, novoStatus, body);
         fecharModal();
-        await carregarAtividades();
+
+        try {
+            await carregarAtividades();
+        } catch (reloadError) {
+            console.warn('Status atualizado, mas a lista nao foi recarregada automaticamente:', reloadError);
+        }
+
+        setTimeout(() => {
+            alert(`Atividade ${novoStatus.toLowerCase()} com sucesso!`);
+        }, 0);
 
     } catch (err) {
         console.error('Erro ao atualizar status:', err);
