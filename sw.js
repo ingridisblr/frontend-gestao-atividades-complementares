@@ -3,7 +3,7 @@
    Cache-first para assets estáticos, network-first para API
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
-const CACHE_NAME    = 'kore-v4-certificados';
+const CACHE_NAME    = 'kore-v5-status-feedback';
 const API_ORIGINS   = ['https://sistema-gestao-atividades-complementares.onrender.com', 'http://localhost:3000'];
 
 const STATIC_ASSETS = [
@@ -42,6 +42,11 @@ const STATIC_ASSETS = [
     '/admin/src/js/coordenacao.js',
     '/admin/src/js/auditoria.js',
     '/admin/src/js/regras.js',
+
+    '/coordenador/src/pages/atividades.html',
+    '/coordenador/src/css/atividades.css',
+    '/coordenador/src/js/atividades.js',
+    '/coordenador/src/js/curso-contexto.js',
 
     '/assets/imagens/k-logo1.png',
     '/assets/imagens/logo.png',

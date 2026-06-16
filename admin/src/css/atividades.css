@@ -160,10 +160,14 @@
 .link-arquivo {
     display: inline-block;
     margin-top: 10px;
+    border: 0;
+    background: transparent;
     color: var(--brand-dark);
     font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
     font-weight: 600;
     text-decoration: none;
+    cursor: pointer;
 }
 
 .link-arquivo:hover { text-decoration: underline; }
