@@ -3,7 +3,7 @@
    Cache-first para assets estáticos, network-first para API
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
-const CACHE_NAME    = 'kore-v5-status-feedback';
+const CACHE_NAME    = 'kore-v6-status-buttons';
 const API_ORIGINS   = ['https://sistema-gestao-atividades-complementares.onrender.com', 'http://localhost:3000'];
 
 const STATIC_ASSETS = [

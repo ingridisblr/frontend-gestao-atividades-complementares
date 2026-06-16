@@ -12,7 +12,8 @@ async function apiFetch(endpoint, options = {}) {
     try {
         const response = await fetch(`${API_URL}${endpoint}`, {
             ...options,
-            headers
+            headers,
+            cache: 'no-store'
         });
 
         if (response.status === 401) {
