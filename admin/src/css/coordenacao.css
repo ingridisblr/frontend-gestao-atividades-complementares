@@ -1,4 +1,3 @@
-
 .page-header {
     display: flex;
     align-items: flex-start;
@@ -167,6 +166,14 @@
 
 .btn-primary:hover {
     background: #1d4ed8;
+}
+
+.btn-novo-coord {
+    background: #04BFAD;
+}
+
+.btn-novo-coord:hover {
+    background: #00B7B8;
 }
 
 .btn-danger {
