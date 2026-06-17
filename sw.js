@@ -3,13 +3,14 @@
    Cache-first para assets estáticos, network-first para API
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
-const CACHE_NAME    = 'kore-v6-status-buttons';
+const CACHE_NAME    = 'kore-v8-coordenador-dashboard';
 const API_ORIGINS   = ['https://sistema-gestao-atividades-complementares.onrender.com', 'http://localhost:3000'];
 
 const STATIC_ASSETS = [
     /* â”€â”€ raiz â”€â”€ */
     '/',
     '/index.html',
+    '/manifest.json',
 
     /* â”€â”€ admin pages â”€â”€ */
     '/admin/src/pages/dashboard.html',
@@ -32,6 +33,7 @@ const STATIC_ASSETS = [
     '/shared/js/api.js',
     '/shared/js/auth.js',
     '/shared/js/components.js',
+    '/shared/js/pwa.js',
 
     /* â”€â”€ JS admin â”€â”€ */
     '/admin/src/js/dashboard.js',
@@ -43,9 +45,16 @@ const STATIC_ASSETS = [
     '/admin/src/js/auditoria.js',
     '/admin/src/js/regras.js',
 
+    '/coordenador/src/pages/dashboard.html',
+    '/coordenador/src/pages/alunos.html',
     '/coordenador/src/pages/atividades.html',
+    '/coordenador/src/pages/relatorio.html',
+    '/coordenador/src/css/dashboard.css',
     '/coordenador/src/css/atividades.css',
+    '/coordenador/src/js/dashboard.js',
+    '/coordenador/src/js/alunos.js',
     '/coordenador/src/js/atividades.js',
+    '/coordenador/src/js/relatorio.js',
     '/coordenador/src/js/curso-contexto.js',
 
     '/assets/imagens/k-logo1.png',

@@ -37,6 +37,12 @@
             "short_name": "Atividades",
             "url": "/admin/src/pages/atividades.html",
             "icons": [{ "src": "assets/imagens/k-logo1.png", "sizes": "192x192" }]
+        },
+        {
+            "name": "Coordenação",
+            "short_name": "Coordenação",
+            "url": "/coordenador/src/pages/dashboard.html",
+            "icons": [{ "src": "assets/imagens/k-logo1.png", "sizes": "192x192" }]
         }
     ]
 }
