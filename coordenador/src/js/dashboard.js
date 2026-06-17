@@ -168,6 +168,24 @@ function renderizarRecentes(atividades) {
     `).join('');
 }
 
+async function buscarJsonDashboard(endpoint, chave) {
+    try {
+        const res = await apiFetch(endpoint);
+
+        if (!res || !res.ok) {
+            const dataErro = await res?.json().catch(() => ({}));
+            console.warn(`[Dashboard coordenador] Falha em ${endpoint}:`, dataErro.message || res?.status);
+            return [];
+        }
+
+        const data = await res.json().catch(() => ({}));
+        return coordNormalizarLista(data, chave);
+    } catch (error) {
+        console.warn(`[Dashboard coordenador] Erro ao buscar ${endpoint}:`, error);
+        return [];
+    }
+}
+
 async function carregarCursosBase() {
     try {
         await coordSincronizarUsuarioDaApi();
@@ -188,19 +206,16 @@ async function carregarDashboard() {
         await carregarCursosBase();
         atualizarCursoAtual();
 
-        const [resAtividades, resAlunos] = await Promise.all([
-            apiFetch(`/api/atividades${coordCursoSelecionadoId(cursosBase) ? `?cursoId=${coordCursoSelecionadoId(cursosBase)}` : ''}`),
-            apiFetch('/api/alunos')
+        const cursoId = coordCursoSelecionadoId(cursosBase);
+        const endpointAtividades = `/api/atividades${cursoId ? `?cursoId=${cursoId}` : ''}`;
+
+        const [listaAtividades, listaAlunos] = await Promise.all([
+            buscarJsonDashboard(endpointAtividades, 'atividades'),
+            buscarJsonDashboard('/api/alunos', 'alunos')
         ]);
 
-        if (!resAtividades.ok) throw new Error('Erro ao buscar atividades');
-        if (!resAlunos.ok) throw new Error('Erro ao buscar alunos');
-
-        const dataAtividades = await resAtividades.json();
-        const dataAlunos = await resAlunos.json();
-
-        const atividades = coordFiltrarAtividadesCursoSelecionado(coordNormalizarLista(dataAtividades, 'atividades'), cursosBase);
-        const alunos = coordFiltrarAlunosCursoSelecionado(coordNormalizarLista(dataAlunos, 'alunos'), cursosBase);
+        const atividades = coordFiltrarAtividadesCursoSelecionado(listaAtividades, cursosBase);
+        const alunos = coordFiltrarAlunosCursoSelecionado(listaAlunos, cursosBase);
 
         const pendentes = atividades.filter(a => normalizarStatus(a.status) === 'pendente').length;
         const aprovadas = atividades.filter(a => normalizarStatus(a.status) === 'aprovada').length;
@@ -221,6 +236,14 @@ async function carregarDashboard() {
         renderizarRecentes(atividades);
     } catch (error) {
         console.error('Erro ao carregar dashboard do coordenador:', error);
+        document.getElementById('statTotal').textContent = '0';
+        document.getElementById('statPendentes').textContent = '0';
+        document.getElementById('statAprovadas').textContent = '0';
+        document.getElementById('statReprovadas').textContent = '0';
+        document.getElementById('statHoras').innerHTML = '0<span class="stat-unit">h</span>';
+        document.getElementById('statAlunos').textContent = '0';
+        renderizarBarras({});
+        renderizarPizza({ pendentes: 0, aprovadas: 0, reprovadas: 0 });
         document.getElementById('recentesList').innerHTML = '<li class="recentes-item">Erro ao carregar dados do dashboard.</li>';
     }
 }
